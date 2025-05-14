@@ -140,7 +140,7 @@ int main() {
                 } else if (tipo == "mediterraneo") {
                     serra.aggiungiImpianto(std::make_unique<ImpiantoMediterraneo>(nuovoId, nome));
                     std::cout << "Aggiunto impianto mediterraneo: " << nome << std::endl;
-                } else if (tipo == "desertico") {
+                } /*else if (tipo == "desertico") {
                     serra.aggiungiImpianto(std::make_unique<ImpiantoDesertico>(nuovoId, nome));
                     std::cout << "Aggiunto impianto desertico: " << nome << std::endl;
                 } else if (tipo == "alpino") {
@@ -151,7 +151,7 @@ int main() {
                     std::cout << "Aggiunto impianto carnivoro: " << nome << std::endl;
                 } else {
                     std::cout << "Tipo di impianto non riconosciuto: " << tipo << std::endl;
-                }
+                }*/
                 continue;
             }
 

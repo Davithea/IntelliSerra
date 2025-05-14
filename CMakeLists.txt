@@ -10,11 +10,14 @@ include_directories(${CMAKE_SOURCE_DIR}/Include)
 add_executable(IntelliSerra
         main.cpp
         Src/Impianto.cpp
+        Include/Impianto.h
         Include/Orario.h
         Src/Orario.cpp
         Include/Serra.h
         Src/Serra.cpp
-        Include/ImpiantoTropicale.h  # Rinominato
-        Src/ImpiantoTropicale.cpp    # Rinominato
+        Include/Tropicale.h
+        Src/Tropicale.cpp
         Include/Mediterraneo.h
+        Src/Mediterraneo.cpp
+        Src/Mediterraneo.cpp
 )

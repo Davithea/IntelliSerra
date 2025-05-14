@@ -4,6 +4,9 @@
 #include "Impianto.h"
 #include <vector>
 
+//Temperatura. Inizia da 28. Ogni munto scende da un valore che va da 0.1-0.5 (random). Si accende se è sotto i 25
+//Quando è acceso, ogni ora aumenta da 0.75 a 1 fino a che ritorna sopra i 28
+
 class ImpiantoMediterraneo : public Impianto {
 private:
     static constexpr double INTERVALLO_ORE_FERIALE = 2.0;  // Intervallo di attivazione nei giorni feriali
