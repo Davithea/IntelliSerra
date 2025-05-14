@@ -4,18 +4,14 @@
 #include <string>
 
 class Orario {
-private:
-    int ore;    // Ore (0-23)
-    int minuti; // Minuti (0-59)
+    int ore;
+    int minuti;
 
 public:
     Orario();
-
     Orario(int _ore, int _minuti);
-
     Orario(const std::string& orarioStr);
 
-    // Metodi getter e setter
     int getOre() const { return ore; }
     int getMinuti() const { return minuti; }
     void setOre(int _ore);

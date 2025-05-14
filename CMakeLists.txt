@@ -12,4 +12,9 @@ add_executable(IntelliSerra
         Src/Impianto.cpp
         Include/Orario.h
         Src/Orario.cpp
+        Include/Serra.h
+        Src/Serra.cpp
+        Include/ImpiantoTropicale.h  # Rinominato
+        Src/ImpiantoTropicale.cpp    # Rinominato
+        Include/Mediterraneo.h
 )

@@ -9,7 +9,7 @@ protected:
     int id;                     // Identificatore univoco dell'impianto
     std::string nome;           // Nome dell'impianto/tipo di pianta
     bool attivo;                // Stato corrente (true = acceso, false = spento)
-    //Orario ultimaAttivazione;   // Orario dell'ultima attivazione
+    Orario ultimaAttivazione;   // Orario dell'ultima attivazione
     double consumoIdrico;       // Consumo idrico totale (in litri)
     double tassoConsumo;        // Consumo idrico per unità di tempo (litri/ora)
     bool modalitaAutomatica;    // Indica se l'impianto è in modalità automatica
@@ -35,7 +35,7 @@ public:
     int getId() const { return id; }
     std::string getNome() const { return nome; }
     bool isAttivo() const { return attivo; }
-    //Orario getUltimaAttivazione() const { return ultimaAttivazione; }
+    Orario getUltimaAttivazione() const { return ultimaAttivazione; }
     double getConsumoIdrico() const { return consumoIdrico; }
     double getTassoConsumo() const { return tassoConsumo; }
     bool isModalitaAutomatica() const { return modalitaAutomatica; }
