@@ -2,38 +2,41 @@
 #define SERRA_H
 
 #include <vector>
-#include <memory>
 #include <string>
 #include "Impianto.h"
 #include "Orario.h"
 
+using namespace std;
+
 class Serra {
-private:
-    std::vector<std::unique_ptr<Impianto>> impianti;    // Collezione di impianti
-    Orario orarioAttuale;                               // Orario corrente del sistema
-    int prossimoId;                                     // ID incrementale per nuovi impianti
+    vector<Impianto*> impianti;  //Vettore di puntatori agli impianti che sono presenti nella serra
+    Orario orarioAttuale;        //Orario attuale della serra
+    int prossimoId;              //ID da assegnare al prossimo impianto
     size_t trovaIndiceImpianto(int id) const;
-    size_t trovaIndiceImpiantoDaNome(const std::string& nome) const;
+    size_t trovaIndiceImpiantoDaNome(const string& nome) const;
 
 public:
-    Serra();
-    int aggiungiImpianto(std::unique_ptr<Impianto> impianto);
+    Serra();    //Costruttore di default per la serra
+    ~Serra();   //Distruttore per la serra
+
+    //Per commenti relativi alle funzioni della classe Serra vedi Serra.cpp
+    int aggiungiImpianto(Impianto* impianto);
     bool rimuoviImpianto(int id);
-    bool rimuoviImpiantoDaNome(const std::string& nome);
-    bool accendiImpianto(const std::string& nome);
-    bool spegniImpianto(const std::string& nome);
-    bool impostaTimer(const std::string& nome, const Orario& oraInizio, const Orario& oraFine);
-    bool rimuoviTimer(const std::string& nome);
-    std::vector<std::string> impostaOrario(const Orario& nuovoOrario);
+    bool rimuoviImpiantoDaNome(const string& nome);
+    bool accendiImpianto(const string& nome);
+    bool spegniImpianto(const string& nome);
+    bool impostaTimer(const string& nome, const Orario& oraInizio, const Orario& oraFine);
+    bool rimuoviTimer(const string& nome);
+    vector<string> impostaOrario(const Orario& nuovoOrario);
     Orario getOrarioAttuale() const;
-    std::vector<std::string> resetOrario();
-    std::vector<std::string> resetTimer();
-    std::vector<std::string> resetAll();
-    std::vector<std::string> mostraStatoImpianti() const;
-    std::string mostraStatoImpianto(const std::string& nome) const;
+    vector<string> resetOrario();
+    vector<string> resetTimer();
+    vector<string> resetAll();
+    vector<string> mostraStatoImpianti() const;
+    string mostraStatoImpianto(const string& nome) const;
     double getConsumoIdricoTotale() const;
     size_t getNumeroImpianti() const;
-    bool esisteImpianto(const std::string& nome) const;
+    bool esisteImpianto(const string& nome) const;
 };
 
-#endif // SERRA_H
+#endif //SERRA_H

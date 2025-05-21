@@ -97,25 +97,28 @@ int Orario::differenzaInMinuti(const Orario& altro) const {
 }
 
 bool Orario::isPrimaDi(const Orario& altro) const {
+    // Utilizziamo l'operatore < sovraccaricato
     return *this < altro;
 }
 
 bool Orario::isDopoD(const Orario& altro) const {
+    // Utilizziamo l'operatore > sovraccaricato
     return *this > altro;
 }
 
 bool Orario::isUgualeA(const Orario& altro) const {
+    // Utilizziamo l'operatore == sovraccaricato
     return *this == altro;
 }
 
 void Orario::incrementa(int _minuti) {
     // Incrementa l'orario del numero di minuti specificato
     int totalMinuti = ore * 60 + minuti + _minuti;
-    
+
     // Gestisci il caso in cui i minuti totali superino un giorno
     totalMinuti = totalMinuti % (24 * 60);
     if (totalMinuti < 0) totalMinuti += 24 * 60;
-    
+
     ore = totalMinuti / 60;
     minuti = totalMinuti % 60;
 }
@@ -150,5 +153,5 @@ bool Orario::operator>(const Orario& altro) const {
 }
 
 bool Orario::operator>=(const Orario& altro) const {
-    return !(*this < altro);
+    return !(*this<altro);
 }

@@ -4,34 +4,33 @@
 #include <string>
 #include "Orario.h"
 
+using namespace std;
+
+//Classe base impianto per la gestione di di un impianto
+//Author: Davide Gastaldello
 class Impianto {
 protected:
-    int id;                     // Identificatore univoco dell'impianto
-    std::string nome;           // Nome dell'impianto/tipo di pianta
-    bool attivo;                // Stato corrente (true = acceso, false = spento)
-    Orario ultimaAttivazione;   // Orario dell'ultima attivazione
-    double consumoIdrico;       // Consumo idrico totale (in litri)
-    double tassoConsumo;        // Consumo idrico per unità di tempo (litri/ora)
-    bool modalitaAutomatica;    // Indica se l'impianto è in modalità automatica
+    int id; //Identificatore per riconoscere in modo univoco un impianto
+    string nome;    //Stringa per contenere il nome dell'impianto
+    bool attivo;    //Variabile booleana per indicare se un impianto è attivo o meno
+    Orario ultimaAttivazione;   //Orario per tenere traccia dell'ultima attivazione dell'impianto
+    double consumoIdrico;       //Consumo totale di acqua
+    double tassoConsumo;        //Tasso di consumo di acqua (litri/ora)
+    bool modalitaAutomatica;    //Variabile booleana per indicare se l'impianto funziona in modalità automatica
 
 public:
-    Impianto(int _id, const std::string& _nome, double _tassoConsumo, bool _modalitaAutomatica);
+    Impianto(int _id, const string& _nome, double _tassoConsumo, bool _modalitaAutomatica); //Costruttore per l'impianto
+    virtual ~Impianto() = default;  //Costruttore di default che può essere sovrascritto dalle classi secondarie
+    virtual bool accendi(const Orario& orarioCorrente); //Funzione per accendere l'impianto
+    virtual bool spegni(const Orario& orarioCorrente);  //Funzione per spegnere l'impianto
+    virtual bool impostaTimer(const Orario& oraInizio, const Orario& oraFine);  //Funzione per impostare un timer
+    virtual bool rimuoviTimer();    //Funzione per rimuovere un timer precedentemente impostato
+    virtual bool aggiorna(const Orario& orarioPrecedente, const Orario& orarioAttuale) = 0; //Funzione per aggiornare lo stato di un impianto
+    virtual std::string stampaStato() const;    //Funzione per stampare lo stato di un impianto
+    double calcolaConsumo(double oreDiAttivita) const;  //Funzione per calcolare il consumo di un impianto
+    virtual Impianto* clone() const = 0;
 
-    virtual ~Impianto() = default;
-
-    virtual bool accendi(const Orario& orarioCorrente);
-
-    virtual bool spegni(const Orario& orarioCorrente);
-
-    virtual bool impostaTimer(const Orario& oraInizio, const Orario& oraFine);
-
-    virtual bool rimuoviTimer();
-
-    virtual bool aggiorna(const Orario& orarioPrecedente, const Orario& orarioAttuale) = 0;
-
-    virtual std::string stampaStato() const;
-
-    // Metodi getter
+    //Propetry pubbliche per accedere agli attributi privati della classe
     int getId() const { return id; }
     std::string getNome() const { return nome; }
     bool isAttivo() const { return attivo; }
@@ -39,10 +38,6 @@ public:
     double getConsumoIdrico() const { return consumoIdrico; }
     double getTassoConsumo() const { return tassoConsumo; }
     bool isModalitaAutomatica() const { return modalitaAutomatica; }
-
-    double calcolaConsumo(double oreDiAttivita) const;
-
-    virtual Impianto* clone() const = 0;
 };
 
-#endif // IMPIANTO_H
+#endif //IMPIANTO_H

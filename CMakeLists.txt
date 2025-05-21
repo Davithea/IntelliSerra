@@ -20,4 +20,14 @@ add_executable(IntelliSerra
         Include/Mediterraneo.h
         Src/Mediterraneo.cpp
         Src/Mediterraneo.cpp
+        Include/UserInterface.h
+        Src/UserInterface.cpp
+        Include/Desertico.h
+        Include/Alpino.h
+        Include/Carnivoro.h
+        Src/Alpino.cpp
+        Src/Carnivoro.cpp
+        Src/Desertico.cpp
+        Include/Logger.h
+        Src/Logger.cpp
 )
