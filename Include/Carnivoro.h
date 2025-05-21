@@ -1,28 +1,29 @@
-//
-// Created by cracc on 21/05/2025.
-//
-
-#ifndef CARNIVORO_H
-#define CARNIVORO_H
+#ifndef IMPIANTO_CARNIVORO_H
+#define IMPIANTO_CARNIVORO_H
 
 #include "Impianto.h"
 
-class Carnivora : public Impianto {
+class ImpiantoCarnivoro : public Impianto {
 private:
-    static constexpr double INTERVALLO_ORE = 1.5;       // Attivazione ogni 1.5 ore
-    static constexpr double DURATA_ATTIVAZIONE_ORE = 0.2; // Durata breve: 0.2 ore (12 minuti)
+    static constexpr double INTERVALLO_ORE = 1.5;  // Intervallo di attivazione in ore
+    static constexpr double DURATA_ATTIVAZIONE_ORE = 1.5;  // Durata dell'attivazione modificata a 2.5 ore
 
-    Orario prossimaAttivazione;
-    Orario prossimoSpegnimento;
+    Orario prossimaAttivazione;  // Orario della prossima attivazione programmata
+    Orario prossimoSpegnimento;  // Orario del prossimo spegnimento programmato
 
 public:
-    Carnivora(int id, const std::string& nome, double tassoConsumo = 1.5);
+    ImpiantoCarnivoro(int id, const std::string& nome, double tassoConsumo = 5.0);
     bool aggiorna(const Orario& orarioPrecedente, const Orario& orarioAttuale) override;
     bool impostaTimer(const Orario& oraInizio, const Orario& oraFine) override;
     bool rimuoviTimer() override;
     std::string stampaStato() const override;
     Impianto* clone() const override;
     void calcolaProssimaAttivazione(const Orario& orarioAttuale);
+
+    // Override del metodo accendi per impostare lo spegnimento automatico dopo 2.5 ore
+    bool accendi(const Orario& orario) override;
+
+    int getDurataAutomatica() const override;
 };
 
-#endif // CARNIVORO_H
+#endif // IMPIANTO_CARNIVORO_H

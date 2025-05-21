@@ -81,3 +81,11 @@ string Impianto::stampaStato() const {
 double Impianto::calcolaConsumo(double oreDiAttivita) const {
     return tassoConsumo * oreDiAttivita;
 }
+
+bool Impianto::isAutomatico() const {
+    return modalitaAutomatica;
+}
+
+int Impianto::getDurataAutomatica() const {
+    return 60; // Default: 60 minuti (può essere sovrascritto nelle sottoclassi)
+}

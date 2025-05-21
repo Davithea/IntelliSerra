@@ -37,6 +37,7 @@ public:
     double getConsumoIdricoTotale() const;
     size_t getNumeroImpianti() const;
     bool esisteImpianto(const string& nome) const;
+    Impianto* getImpianto(const std::string& nome);
 };
 
 #endif //SERRA_H

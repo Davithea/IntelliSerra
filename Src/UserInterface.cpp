@@ -39,20 +39,21 @@ void UserInterface::run() {
     cout << "Digita 'help' per visualizzare i comandi disponibili." << endl;
 
     while (continua) {
-        cout << "\n> ";
-        getline(cin, input);
+        cout << "\n> "; //Stampo il simbolo del terminale che indica che posso inserire un comando
+        getline(cin, input);    //Funzione che legge una riga del programma
 
         string inputLower = input;
         transform(inputLower.begin(), inputLower.end(), inputLower.begin(),
-                      [](unsigned char c){ return std::tolower(c); });
+                      [](unsigned char c){ return tolower(c); });   //Trasformo la stringa letta in un formato
+        //necessario al riconoscimento di un comando
 
         //Gestione dei comandi exit, quit e help
-        if (inputLower == "exit" || inputLower == "quit") {
-            continua = false;
-            cout << "Chiusura del sistema di gestione serra." << std::endl;
+        if (inputLower == "exit" || inputLower == "quit") { //Se il comando è exit o quit
+            continua = false;   //Dico al programma che deve fermarsi...
+            cout << "Chiusura del sistema di gestione serra." << std::endl; //Scrivo che ho chiuso il programma
             continue;
-        } if (inputLower == "help") {
-            stampaHelp();
+        } if (inputLower == "help") {   //Se il comando è help
+            stampaHelp();   //Stampo il messaggio che mostra quello che fanno i vari comandi
             continue;
         }
 
@@ -60,17 +61,19 @@ void UserInterface::run() {
     }
 }
 
-std::vector<std::string> UserInterface::commandParser(const std::string& command) {
-    std::vector<std::string> tokens;
-    std::istringstream ss(command);
-    std::string token;
+//Funzione per dividere il comando in base alle parole di cui è composto
+//Author: codice fornito dal professore
+vector<string> UserInterface::commandParser(const string& command) {
+    vector<string> tokens;
+    istringstream ss(command);
+    string token;
 
     bool isDeviceName = false;
-    std::string deviceName;
+    string deviceName;
 
     while (ss >> token) {
         if (isDeviceName) {
-            if (token == "on" || token == "off" || token.find(':') != std::string::npos) {
+            if (token == "on" || token == "off" || token.find(':') != string::npos) {
                 if (!deviceName.empty()) {
                     tokens.push_back(deviceName);
                     deviceName.clear();
@@ -99,169 +102,173 @@ std::vector<std::string> UserInterface::commandParser(const std::string& command
         tokens.push_back(deviceName);
     }
 
-    for (const auto& t : tokens) {
-        std::cout << "[" << t << "] ";
-    }
-    std::cout << std::endl;
-
     return tokens;
 }
 
-// Funzione per convertire una stringa in un oggetto Orario
-Orario UserInterface::stringToOrario(const std::string& str) {
+//Funzione per convertire una stringa in un oggetto Orario
+//Author: Davide Gastaldello
+Orario UserInterface::stringToOrario(const string& str) {
     int ore = 0, minuti = 0;
 
-    // Formato atteso: HH:MM
+    //Verifico che il formato della stringa sia quello corretto
     if (str.size() == 5 && str[2] == ':') {
         try {
-            ore = std::stoi(str.substr(0, 2));
-            minuti = std::stoi(str.substr(3, 2));
-        } catch (const std::exception& e) {
-            // Gestione errore di conversione
-            std::cerr << "Formato orario non valido: " << str << std::endl;
+            ore = stoi(str.substr(0, 2));   //Converto la stringa formata dai primi due caratteri in intero
+            minuti = stoi(str.substr(3, 2));     //Converto la stringa formata dagli ultimi due caratteri in intero
+        } catch (const exception& e) {
+            cerr << "Formato orario non valido: " << str << endl;   //Se non riesco a convertire significa che l'orario è stato scritto male
             return Orario();
         }
     }
 
-    // Verifica validità
+    //Verifico che l'orario inserito sia corretto (non ci siano ore > 23 o < 0 e minuti > 60 o < 0)
     if (ore < 0 || ore > 23 || minuti < 0 || minuti > 59) {
         std::cerr << "Orario non valido: " << str << std::endl;
         return Orario();
     }
 
-    return Orario(ore, minuti);
+    return Orario(ore, minuti); //Se non ci sono stati errori ritorno una variabile Orario con ore e minuti scritti
 }
 
-// Stampa l'help con i comandi disponibili
+//Funzione per stampare l'help con i comandi disponibili
+//Author: Davide Gastaldello
 void UserInterface::stampaHelp() {
-    std::cout << "\n=== Sistema di Gestione Serra Intelligente - Guida Comandi ===" << std::endl;
-    std::cout << "add tropicale <nome>       - Aggiunge un impianto tropicale" << std::endl;
-    std::cout << "add mediterraneo <nome>    - Aggiunge un impianto mediterraneo" << std::endl;
-    std::cout << "add desertico <nome>       - Aggiunge un impianto desertico" << std::endl;
-    std::cout << "add alpino <nome>          - Aggiunge un impianto alpino" << std::endl;
-    std::cout << "add carnivoro <nome>       - Aggiunge un impianto carnivoro" << std::endl;
-    std::cout << "set <nome> on              - Accende l'impianto manualmente" << std::endl;
-    std::cout << "set <nome> off             - Spegne l'impianto manualmente" << std::endl;
-    std::cout << "set <nome> <inizio> <fine> - Imposta timer per l'impianto" << std::endl;
-    std::cout << "rm <nome>                  - Rimuove il timer dell'impianto" << std::endl;
-    std::cout << "show                       - Mostra tutti gli impianti" << std::endl;
-    std::cout << "show <nome>                - Mostra un impianto specifico" << std::endl;
-    std::cout << "set time <HH:MM>           - Imposta l'orario del sistema" << std::endl;
-    std::cout << "reset time                 - Reimposta l'orario a 00:00" << std::endl;
-    std::cout << "reset timers               - Rimuove tutti i timer" << std::endl;
-    std::cout << "reset all                  - Reimposta tutto il sistema" << std::endl;
-    std::cout << "exit                       - Esci dal programma" << std::endl;
-    std::cout << "help                       - Mostra questo messaggio di aiuto" << std::endl;
-    std::cout << "================================================================\n" << std::endl;
+    cout << "\n=== Sistema di Gestione Serra Intelligente - Guida Comandi ===" << endl;
+    cout << "add tropicale <nome>       - Aggiunge un impianto tropicale" << endl;
+    cout << "add mediterraneo <nome>    - Aggiunge un impianto mediterraneo" << endl;
+    cout << "add desertico <nome>       - Aggiunge un impianto desertico" << endl;
+    cout << "add alpino <nome>          - Aggiunge un impianto alpino" << endl;
+    cout << "add carnivoro <nome>       - Aggiunge un impianto carnivoro" << endl;
+    cout << "set <nome> on              - Accende l'impianto manualmente" << endl;
+    cout << "set <nome> off             - Spegne l'impianto manualmente" << endl;
+    cout << "set <nome> <inizio> <fine> - Imposta timer per l'impianto" << endl;
+    cout << "rm <nome>                  - Rimuove il timer dell'impianto" << endl;
+    cout << "show                       - Mostra tutti gli impianti" << endl;
+    cout << "show <nome>                - Mostra un impianto specifico" << endl;
+    cout << "set time <HH:MM>           - Imposta l'orario del sistema" << endl;
+    cout << "reset time                 - Reimposta l'orario a 00:00" << endl;
+    cout << "reset timers               - Rimuove tutti i timer" << endl;
+    cout << "reset all                  - Reimposta tutto il sistema" << endl;
+    cout << "exit                       - Esci dal programma" << endl;
+    cout << "help                       - Mostra questo messaggio di aiuto" << endl;
+    cout << "================================================================\n" << endl;
 }
 
-// Processo di un singolo comando
+//Funzione per processare un comando
+//Author: Davide Gastaldello (utilizzando struttura fornita dal professore)
 void UserInterface::processCommand(const std::string& command) {
     try {
-        // Gestione speciale per il comando add
-        if (command.substr(0, 4) == "add ") {
-            std::istringstream ss(command);
-            std::string cmd, tipo, nome;
+        //Gestisco in moso speciale il comando add per aggiungere un impianto alla serra
+        if (command.substr(0, 4) == "add ") {   //Controllo se il comando contiene la sottostringa "add"
+            istringstream ss(command);
+            string cmd, tipo, nome;
 
-            ss >> cmd; // Legge "add"
-            ss >> tipo; // Legge il tipo (tropicale, mediterraneo, ecc.)
+            ss >> cmd; //Legge la prima parola del comando che dovrebbe essere "add"
+            ss >> tipo; //Legge il tipo (tropicale, mediterraneo, ecc.)
+            getline(ss, nome); //Dopo comando e tipo resta solo da leggere il nome, che sarà la parte finale del comando
+            nome = nome.substr(1); //Dal nome devo però rimuovere lo spazio iniziale che avevo letto con getLine()
 
-            // Legge il resto come nome dell'impianto
-            std::getline(ss, nome);
-            nome = nome.substr(1); // Rimuove lo spazio iniziale
+            transform(tipo.begin(), tipo.end(), tipo.begin(),
+                          [](unsigned char c){ return tolower(c); });   //Trasformo la stringa del tipo in modo da avere una lettura corretta
 
-            std::transform(tipo.begin(), tipo.end(), tipo.begin(),
-                          [](unsigned char c){ return std::tolower(c); });
-
-            if (serra.esisteImpianto(nome)) {
-                std::cout << "Errore: Esiste già un impianto con il nome '" << nome << "'" << std::endl;
+            if (serra.esisteImpianto(nome)) {   //Controllo che nella serra non esista già un impianto con il nome scelto
+                cerr << "Errore: Esiste già un impianto con il nome '" << nome << "'" << endl;
                 return;
             }
 
-            int nuovoId = serra.getNumeroImpianti() + 1;
+            int nuovoId = serra.getNumeroImpianti() + 1;    //Il nuovo ID sarà il numero successivo al numero di impianti
 
+            //Aggiungo un nuovo impianto in base al tipo
             if (tipo == "tropicale") {
                 serra.aggiungiImpianto(new ImpiantoTropicale(nuovoId, nome));
-                std::cout << "Aggiunto impianto tropicale: " << nome << std::endl;
+                cout << "Aggiunto impianto tropicale: " << nome << endl;
             } else if (tipo == "mediterraneo") {
                 serra.aggiungiImpianto(new ImpiantoMediterraneo(nuovoId, nome));
-                std::cout << "Aggiunto impianto mediterraneo: " << nome << std::endl;
+                cout << "Aggiunto impianto mediterraneo: " << nome << endl;
             } else if (tipo == "desertico") {
                 serra.aggiungiImpianto(new ImpiantoDesertico(nuovoId, nome));
-                std::cout << "Aggiunto impianto desertico: " << nome << std::endl;
+                cout << "Aggiunto impianto desertico: " << nome << endl;
             } else if (tipo == "alpino") {
-                serra.aggiungiImpianto(new Alpina(nuovoId, nome));
-                std::cout << "Aggiunto impianto alpino: " << nome << std::endl;
+                serra.aggiungiImpianto(new ImpiantoAlpino(nuovoId, nome));
+                cout << "Aggiunto impianto alpino: " << nome << endl;
             } else if (tipo == "carnivoro") {
-                serra.aggiungiImpianto(new Carnivora(nuovoId, nome));
-                std::cout << "Aggiunto impianto carnivoro: " << nome << std::endl;
+                serra.aggiungiImpianto(new ImpiantoCarnivoro(nuovoId, nome));
+                cout << "Aggiunto impianto carnivoro: " << nome << endl;
             } else {
-                std::cout << "Tipo di impianto non riconosciuto: " << tipo << std::endl;
+                cerr << "Tipo di impianto non riconosciuto: " << tipo << endl;
             }
             return;
         }
 
-        auto parti = commandParser(command);
-        if (parti.empty()) return;
+        vector<string> parti = commandParser(command);  //Creo un vettore che conterrà le parti del comando che mi ritorna la funzione commandParser
+        if (parti.empty()) return;  //Controllo se il vettore è vuoto
 
-        // Comando set (accensione/spegnimento/timer)
         if (parti[0] == "set" && parti.size() >= 3) {
-            if (parti[1] == "time" && parti.size() == 3) {
-                Orario nuovoOrario = stringToOrario(parti[2]);
-                if (nuovoOrario == Orario()) {
-                    std::cout << "Formato orario non valido. Usa HH:MM." << std::endl;
+            //Se la prima parola del comando è "set" e il comando ha 3 o più parti
+            if (parti[1] == "time" && parti.size() == 3) {  //Se la seconda parola è "time"
+                Orario nuovoOrario = stringToOrario(parti[2]);  //La terza parte del comando sarà l'orario e quindi lo salvo in una variabile orario dopoa verlo convertito
+                if (nuovoOrario == Orario()) {  //Controllo che il formato dell'orario sia corretto (Orario vuoto errore)
+                    cerr << "Formato orario non valido. Usa HH:MM." << endl;
                     return;
                 }
 
-                Orario attuale = serra.getOrarioAttuale();
+                Orario attuale = serra.getOrarioAttuale();  //Prendo l'orario attuale della serra
 
-                if (nuovoOrario < attuale) {
-                    std::cout << "Non è possibile impostare un orario precedente all'attuale." << std::endl;
+                if (nuovoOrario < attuale) {    //Se il nuovo orario è precedente a quello attuale --> errore
+                    cerr << "Non è possibile impostare un orario precedente all'attuale." << endl;
                     return;
                 }
 
                 Orario corrente = attuale;
 
-                while (corrente < nuovoOrario) {
+                while (corrente < nuovoOrario) {    //Scorro nel tempo fino al nuovo orario
                     Orario prossimo = corrente;
-                    prossimo.incrementa(1); // incrementa di 1 minuto
-                    std::vector<std::string> eventi = serra.impostaOrario(prossimo);
-
-                    for (const auto& evento : eventi) {
-                        std::cout << evento << std::endl;
-                    }
-
+                    prossimo.incrementa(1); //Incremento di minuto in minuto
+                    vector<string> eventi = serra.impostaOrario(prossimo);  //Imposto l'orario della serra come prossimo
                     corrente = prossimo;
                 }
                 return;
             }
 
 
-            // Accensione/spegnimento manuale
-            std::string nomeImpianto = parti[1];
+            //Gestione dell'accensione di un impianto (comando "set nome on/off")
+            string nomeImpianto = parti[1];
 
             if (parti[2] == "on") {
                 // Accendi impianto
                 if (serra.accendiImpianto(nomeImpianto)) {
-                    log(serra.getOrarioAttuale(), "L'impianto '" + nomeImpianto + "' si è acceso", 0);
+                    log(serra.getOrarioAttuale(), "L'impianto '" + nomeImpianto + "' si e' acceso", 0);
                 } else {
                     std::cout << "Impossibile accendere l'impianto '" << nomeImpianto << "'" << std::endl;
                 }
             } else if (parti[2] == "off") {
                 // Spegni impianto
                 if (serra.spegniImpianto(nomeImpianto)) {
-                    log(serra.getOrarioAttuale(), "L'impianto '" + nomeImpianto + "' si è spento", 0);
+                    log(serra.getOrarioAttuale(), "L'impianto '" + nomeImpianto + "' si e' spento", 0);
                 } else {
-                    std::cout << "Impossibile spegnere l'impianto '" << nomeImpianto << "'" << std::endl;
+                    cerr << "Impossibile spegnere l'impianto '" << nomeImpianto << "'" << std::endl;
                 }
-            } else if (parti.size() == 4) {
-                // Imposta timer
+            } else if (parti.size() == 3 && parti[2].find(':') != string::npos) {
+                // Comando: set nome HH:MM
                 Orario oraInizio = stringToOrario(parti[2]);
-                Orario oraFine = stringToOrario(parti[3]);
-
-                if (oraInizio == Orario() || oraFine == Orario()) {
+                if (oraInizio == Orario()) {
                     std::cout << "Formato orario non valido. Usa HH:MM." << std::endl;
                     return;
+                }
+
+                Impianto* imp = serra.getImpianto(nomeImpianto);
+                if (!imp) {
+                    std::cout << "Impianto '" << nomeImpianto << "' non trovato." << std::endl;
+                    return;
+                }
+
+                Orario oraFine;
+                if (imp->isAutomatico()) {
+                    int durata = imp->getDurataAutomatica();
+                    oraFine = oraInizio;
+                    oraFine.incrementa(durata);
+                } else {
+                    oraFine = Orario(23, 59); // Manuale: acceso fino a fine giornata
                 }
 
                 if (serra.impostaTimer(nomeImpianto, oraInizio, oraFine)) {
@@ -271,10 +278,40 @@ void UserInterface::processCommand(const std::string& command) {
                 } else {
                     std::cout << "Impossibile impostare il timer per l'impianto '" << nomeImpianto << "'" << std::endl;
                 }
+                return;
             }
-            return;
-        }
+            else if (parti.size() == 4 && parti[2].find(':') != string::npos && parti[3].find(':') != string::npos) {
+                // Comando: set nome HH:MM HH:MM
+                Orario oraInizio = stringToOrario(parti[2]);
+                Orario oraFine = stringToOrario(parti[3]);
 
+                if (oraInizio == Orario() || oraFine == Orario()) {
+                    std::cout << "Formato orario non valido. Usa HH:MM." << std::endl;
+                    return;
+                }
+
+                Impianto* imp = serra.getImpianto(nomeImpianto);
+                if (!imp) {
+                    std::cout << "Impianto '" << nomeImpianto << "' non trovato." << std::endl;
+                    return;
+                }
+
+                if (imp->isAutomatico()) {
+                    std::cout << "Errore: Non è possibile impostare un intervallo temporale per un impianto automatico." << std::endl;
+                    return;
+                }
+
+                // Impianto manuale
+                if (serra.impostaTimer(nomeImpianto, oraInizio, oraFine)) {
+                    log(serra.getOrarioAttuale(), "Timer impostato per '" + nomeImpianto +
+                                                  "' dalle " + oraInizio.toString() +
+                                                  " alle " + oraFine.toString(), 0);
+                } else {
+                    std::cout << "Impossibile impostare il timer per l'impianto '" << nomeImpianto << "'" << std::endl;
+                }
+                return;
+            }
+        }
         // Comando rm (rimozione timer)
         if (parti[0] == "rm" && parti.size() == 2) {
             std::string nomeImpianto = parti[1];
@@ -328,7 +365,7 @@ void UserInterface::processCommand(const std::string& command) {
                     }
                     log(Orario(), "L'orario attuale e' 00:00", 0);
                     return;
-                } else if (parti[1] == "timers") {
+                } if (parti[1] == "timers") {
                     // Reset timer
                     std::vector<std::string> eventi = serra.resetTimer();
                     for (const auto& evento : eventi) {
@@ -336,7 +373,7 @@ void UserInterface::processCommand(const std::string& command) {
                     }
                     log(serra.getOrarioAttuale(), "Tutti i timer sono stati rimossi", 0);
                     return;
-                } else if (parti[1] == "all") {
+                } if (parti[1] == "all") {
                     // Reset completo
                     std::vector<std::string> eventi = serra.resetAll();
                     for (const auto& evento : eventi) {

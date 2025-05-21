@@ -1,28 +1,29 @@
-//
-// Created by cracc on 14/05/2025.
-//
-
-#ifndef ALPINO_H
-#define ALPINO_H
+#ifndef IMPIANTO_ALPINO_H
+#define IMPIANTO_ALPINO_H
 
 #include "Impianto.h"
 
-class Alpina : public Impianto {
+class ImpiantoAlpino : public Impianto {
 private:
-    static constexpr double INTERVALLO_ORE = 4.0;  // Intervallo di attivazione in ore
-    static constexpr double DURATA_ATTIVAZIONE_ORE = 0.25;  // Durata dell'attivazione in ore
+    static constexpr double INTERVALLO_ORE = 1;  // Intervallo di attivazione in ore
+    static constexpr double DURATA_ATTIVAZIONE_ORE = 1;  // Durata dell'attivazione modificata a 2.5 ore
 
     Orario prossimaAttivazione;  // Orario della prossima attivazione programmata
     Orario prossimoSpegnimento;  // Orario del prossimo spegnimento programmato
 
 public:
-    Alpina(int id, const std::string& nome, double tassoConsumo = 2.0);
+    ImpiantoAlpino(int id, const std::string& nome, double tassoConsumo = 5.0);
     bool aggiorna(const Orario& orarioPrecedente, const Orario& orarioAttuale) override;
     bool impostaTimer(const Orario& oraInizio, const Orario& oraFine) override;
     bool rimuoviTimer() override;
     std::string stampaStato() const override;
     Impianto* clone() const override;
     void calcolaProssimaAttivazione(const Orario& orarioAttuale);
+
+    // Override del metodo accendi per impostare lo spegnimento automatico dopo 2.5 ore
+    bool accendi(const Orario& orario) override;
+
+    int getDurataAutomatica() const override;
 };
 
-#endif // ALPINO_H
+#endif // IMPIANTO_ALPINO_H

@@ -1,38 +1,143 @@
-//
-// Created by cracc on 14/05/2025.
-//
 #include "Alpino.h"
+#include <sstream>
+#include <iomanip>
 
-Alpina::Alpina(int id, const std::string& nome, double tassoConsumo)
+ImpiantoAlpino::ImpiantoAlpino(int id, const std::string& nome, double tassoConsumo)
     : Impianto(id, nome, tassoConsumo, true) {
-    // Logica per inizializzare la classe specifica
+    // Inizializza con modalità automatica
+    // Le variabili prossimaAttivazione e prossimoSpegnimento sono inizializzate a 00:00
 }
 
-bool Alpina::aggiorna(const Orario& orarioPrecedente, const Orario& orarioAttuale) {
-    // Logica per aggiornare l'impianto in base all'orario
-    // Questo dipende dalla specifica del progetto e dall'aggiornamento della temperatura o altro
-    return false; // Restituisce false come placeholder
+bool ImpiantoAlpino::aggiorna(const Orario& orarioPrecedente, const Orario& orarioAttuale) {
+    bool statoModificato = false;
+
+    // Gestione singolo ciclo attivazione-spegnimento
+    Orario tempOrario = orarioPrecedente;
+
+    while (true) {
+        // Caso 1: accensione
+        if (!attivo && tempOrario < prossimaAttivazione && prossimaAttivazione <= orarioAttuale) {
+            accendi(prossimaAttivazione);
+            statoModificato = true;
+
+            tempOrario = prossimaAttivazione;
+        }
+        // Caso 2: spegnimento
+        else if (attivo && tempOrario < prossimoSpegnimento && prossimoSpegnimento <= orarioAttuale) {
+            spegni(prossimoSpegnimento);
+            statoModificato = true;
+
+            // Non programmare nuove attivazioni automatiche!
+            prossimaAttivazione = Orario();
+            prossimoSpegnimento = Orario();
+
+            tempOrario = prossimoSpegnimento;
+        } else {
+            break;
+        }
+    }
+
+    return statoModificato;
 }
 
-bool Alpina::impostaTimer(const Orario& oraInizio, const Orario& oraFine) {
-    // Imposta il timer per l'attivazione automatica dell'impianto
-    return false;
+
+bool ImpiantoAlpino::impostaTimer(const Orario& oraInizio, const Orario& oraFine) {
+    if (!modalitaAutomatica) {
+        return false;
+    }
+
+    // Verifica che l'orario di fine sia successivo a quello di inizio
+    if (oraFine <= oraInizio) {
+        return false;
+    }
+
+    // Verifica che la durata non sia eccessiva
+    double durata = oraInizio.differenzaInOre(oraFine);
+    if (durata > 12.0) {  // Limitiamo la durata a 12 ore per sicurezza
+        return false;
+    }
+
+    // Imposta la prossima attivazione e il prossimo spegnimento
+    prossimaAttivazione = oraInizio;
+    prossimoSpegnimento = oraFine;
+
+    return true;
 }
 
-bool Alpina::rimuoviTimer() {
-    // Rimuove il timer per l'attivazione
-    return false;
+bool ImpiantoAlpino::rimuoviTimer() {
+    if (!modalitaAutomatica) {
+        return false;
+    }
+
+    // Reimposta gli orari di attivazione/spegnimento
+    prossimaAttivazione = Orario();
+    prossimoSpegnimento = Orario();
+
+    // Se l'impianto è attivo, lo spegniamo
+    if (attivo) {
+        Orario orarioCorrente;  // Utilizziamo 00:00 come orario di riferimento
+        spegni(orarioCorrente);
+    }
+
+    return true;
 }
 
-std::string Alpina::stampaStato() const {
-    // Restituisce lo stato dell'impianto come stringa
-    return "Impianto Alpina: " + nome;
+std::string ImpiantoAlpino::stampaStato() const {
+    std::stringstream ss;
+
+    // Prima parte: informazioni di base dell'impianto
+    std::string stato = attivo ? "Attivo" : "Spento";
+    ss << "[Tropicale] " << nome << " (ID: " << std::to_string(id) << ") - Stato: " << stato
+       << " | Consumo: " << std::fixed << std::setprecision(2) << consumoIdrico << " L";
+
+    // Aggiungiamo le informazioni specifiche dell'impianto tropicale
+    if (attivo) {
+        ss << " | Ultima attivazione: " << ultimaAttivazione.toString();
+    }
+
+    if (modalitaAutomatica && prossimaAttivazione != Orario()) {
+        ss << " | Prossima attivazione: " << prossimaAttivazione.toString();
+        if (attivo) {
+            ss << " | Prossimo spegnimento: " << prossimoSpegnimento.toString();
+        }
+    }
+
+    ss << " | Ciclo: " << INTERVALLO_ORE << "h ogni " << DURATA_ATTIVAZIONE_ORE << "h";
+
+    return ss.str();
 }
 
-Impianto* Alpina::clone() const {
-    return new Alpina(*this);
+Impianto* ImpiantoAlpino::clone() const {
+    return new ImpiantoAlpino(*this);
 }
 
-void Alpina::calcolaProssimaAttivazione(const Orario& orarioAttuale) {
-    // Calcola il prossimo orario di attivazione dell'impianto in base alla logica
+void ImpiantoAlpino::calcolaProssimaAttivazione(const Orario& orarioAttuale) {
+    // Calcola la prossima attivazione a partire dall'orario attuale
+    // Per le piante tropicali, l'attivazione avviene ogni INTERVALLO_ORE
+
+    // Converti l'intervallo in minuti
+    int intervalloMinuti = static_cast<int>(INTERVALLO_ORE * 60);
+
+    // Crea un nuovo orario partendo dall'attuale e aggiungendo l'intervallo
+    prossimaAttivazione = orarioAttuale;
+    prossimaAttivazione.incrementa(intervalloMinuti);
+}
+
+// Override del metodo accendi per impostare lo spegnimento automatico dopo 1 ora
+bool ImpiantoAlpino::accendi(const Orario& orario) {
+    // Chiamiamo il metodo accendi della classe base
+    bool acceso = Impianto::accendi(orario);
+
+    if (acceso) {
+        // Impianto acceso con successo, impostiamo lo spegnimento automatico dopo 2.5 ore
+        ultimaAttivazione = orario;
+        prossimoSpegnimento = orario;
+        prossimoSpegnimento.incrementa(60); //1 ora = 60 min
+    }
+
+    return acceso;
+}
+
+int ImpiantoAlpino::getDurataAutomatica() const {
+    return 60; // I tropicali funzionano per 1 ora in automatico
 }

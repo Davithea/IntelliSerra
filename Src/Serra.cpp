@@ -357,3 +357,12 @@ size_t Serra::getNumeroImpianti() const {
 bool Serra::esisteImpianto(const string& nome) const {
     return trovaIndiceImpiantoDaNome(nome) < impianti.size();
 }
+
+Impianto* Serra::getImpianto(const std::string& nome) {
+    for (auto& impianto : impianti) {
+        if (impianto->getNome() == nome) {
+            return impianto;
+        }
+    }
+    return nullptr;  // Non trovato
+}

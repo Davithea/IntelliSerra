@@ -1,7 +1,6 @@
 #include "Tropicale.h"
 #include <sstream>
 #include <iomanip>
-#include <cmath>
 
 ImpiantoTropicale::ImpiantoTropicale(int id, const std::string& nome, double tassoConsumo)
     : Impianto(id, nome, tassoConsumo, true) {
@@ -12,50 +11,35 @@ ImpiantoTropicale::ImpiantoTropicale(int id, const std::string& nome, double tas
 bool ImpiantoTropicale::aggiorna(const Orario& orarioPrecedente, const Orario& orarioAttuale) {
     bool statoModificato = false;
 
-    // Se è la prima volta che viene chiamato aggiorna o dopo un reset, inizializza la prossima attivazione
-    if (prossimaAttivazione == Orario()) {
-        calcolaProssimaAttivazione(orarioPrecedente);
-    }
-
-    // Verifica se nell'intervallo di tempo tra orarioPrecedente e orarioAttuale
-    // dobbiamo attivare o disattivare l'impianto
-
-    // Controlliamo se ci sono una o più attivazioni e spegnimenti nell'intervallo
-    // Possono esserci diversi cicli di attivazione/spegnimento
+    // Gestione singolo ciclo attivazione-spegnimento
     Orario tempOrario = orarioPrecedente;
+
     while (true) {
-        // Caso 1: impianto attualmente spento e siamo arrivati al momento di accenderlo
+        // Caso 1: accensione
         if (!attivo && tempOrario < prossimaAttivazione && prossimaAttivazione <= orarioAttuale) {
-            attivo = true;
-            ultimaAttivazione = prossimaAttivazione;
+            accendi(prossimaAttivazione);
             statoModificato = true;
 
-            // Aggiorna il prossimo spegnimento
-            prossimoSpegnimento = prossimaAttivazione;
-            prossimoSpegnimento.incrementa(static_cast<int>(DURATA_ATTIVAZIONE_ORE * 60));
-
-            // Aggiorniamo tempOrario per il prossimo controllo
             tempOrario = prossimaAttivazione;
         }
-        // Caso 2: impianto attualmente acceso e siamo arrivati al momento di spegnerlo
+        // Caso 2: spegnimento
         else if (attivo && tempOrario < prossimoSpegnimento && prossimoSpegnimento <= orarioAttuale) {
             spegni(prossimoSpegnimento);
             statoModificato = true;
 
-            // Calcola la prossima attivazione
-            calcolaProssimaAttivazione(prossimoSpegnimento);
+            // Non programmare nuove attivazioni automatiche!
+            prossimaAttivazione = Orario();
+            prossimoSpegnimento = Orario();
 
-            // Aggiorniamo tempOrario per il prossimo controllo
             tempOrario = prossimoSpegnimento;
-        }
-        else {
-            // Nessun altro evento da gestire nell'intervallo
+        } else {
             break;
         }
     }
 
     return statoModificato;
 }
+
 
 bool ImpiantoTropicale::impostaTimer(const Orario& oraInizio, const Orario& oraFine) {
     if (!modalitaAutomatica) {
@@ -137,4 +121,23 @@ void ImpiantoTropicale::calcolaProssimaAttivazione(const Orario& orarioAttuale) 
     // Crea un nuovo orario partendo dall'attuale e aggiungendo l'intervallo
     prossimaAttivazione = orarioAttuale;
     prossimaAttivazione.incrementa(intervalloMinuti);
+}
+
+// Override del metodo accendi per impostare lo spegnimento automatico dopo 2 ore e mezza
+bool ImpiantoTropicale::accendi(const Orario& orario) {
+    // Chiamiamo il metodo accendi della classe base
+    bool acceso = Impianto::accendi(orario);
+
+    if (acceso) {
+        // Impianto acceso con successo, impostiamo lo spegnimento automatico dopo 2.5 ore
+        ultimaAttivazione = orario;
+        prossimoSpegnimento = orario;
+        prossimoSpegnimento.incrementa(150); // 2.5 ore = 150 minuti
+    }
+
+    return acceso;
+}
+
+int ImpiantoTropicale::getDurataAutomatica() const {
+    return 150; // I tropicali funzionano per 2,5 ore in automatico
 }

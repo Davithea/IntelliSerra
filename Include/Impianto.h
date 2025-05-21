@@ -38,6 +38,9 @@ public:
     double getConsumoIdrico() const { return consumoIdrico; }
     double getTassoConsumo() const { return tassoConsumo; }
     bool isModalitaAutomatica() const { return modalitaAutomatica; }
+    bool isAutomatico() const;
+    virtual int getDurataAutomatica() const; // virtual in caso sia ridefinito nelle sottoclassi
+
 };
 
 #endif //IMPIANTO_H
