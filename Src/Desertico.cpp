@@ -2,7 +2,7 @@
 #include <sstream>
 
 ImpiantoDesertico::ImpiantoDesertico(int id, const std::string& nome, double tassoConsumo)
-    : Impianto(id, nome, tassoConsumo, false) {  // Modalità automatica = false
+    : Impianto(id, nome, tassoConsumo, false, "desertico") {  // Modalità automatica = false
     // L'impianto desertico inizia spento
 }
 

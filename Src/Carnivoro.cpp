@@ -2,8 +2,8 @@
 #include <sstream>
 #include <iomanip>
 
-ImpiantoCarnivoro::ImpiantoCarnivoro(int id, const std::string& nome, double tassoConsumo)
-    : Impianto(id, nome, tassoConsumo, true) {
+ImpiantoCarnivoro::ImpiantoCarnivoro(int id, const string& nome, double tassoConsumo)
+    : Impianto(id, nome, tassoConsumo, true, "carnivoro") {
     // Inizializza con modalità automatica
     // Le variabili prossimaAttivazione e prossimoSpegnimento sono inizializzate a 00:00
 }

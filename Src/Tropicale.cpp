@@ -3,7 +3,7 @@
 #include <iomanip>
 
 ImpiantoTropicale::ImpiantoTropicale(int id, const std::string& nome, double tassoConsumo)
-    : Impianto(id, nome, tassoConsumo, true) {
+    : Impianto(id, nome, tassoConsumo, true, "tropicale") {
     // Inizializza con modalità automatica
     // Le variabili prossimaAttivazione e prossimoSpegnimento sono inizializzate a 00:00
 }

@@ -156,7 +156,7 @@ void UserInterface::stampaHelp() {
 
 //Funzione per processare un comando
 //Author: Davide Gastaldello (utilizzando struttura fornita dal professore)
-void UserInterface::processCommand(const std::string& command) {
+void UserInterface::processCommand(const string& command) {
     try {
         //Gestisco in moso speciale il comando add per aggiungere un impianto alla serra
         if (command.substr(0, 4) == "add ") {   //Controllo se il comando contiene la sottostringa "add"
@@ -181,19 +181,14 @@ void UserInterface::processCommand(const std::string& command) {
             //Aggiungo un nuovo impianto in base al tipo
             if (tipo == "tropicale") {
                 serra.aggiungiImpianto(new ImpiantoTropicale(nuovoId, nome));
-                cout << "Aggiunto impianto tropicale: " << nome << endl;
             } else if (tipo == "mediterraneo") {
                 serra.aggiungiImpianto(new ImpiantoMediterraneo(nuovoId, nome));
-                cout << "Aggiunto impianto mediterraneo: " << nome << endl;
             } else if (tipo == "desertico") {
                 serra.aggiungiImpianto(new ImpiantoDesertico(nuovoId, nome));
-                cout << "Aggiunto impianto desertico: " << nome << endl;
             } else if (tipo == "alpino") {
                 serra.aggiungiImpianto(new ImpiantoAlpino(nuovoId, nome));
-                cout << "Aggiunto impianto alpino: " << nome << endl;
             } else if (tipo == "carnivoro") {
                 serra.aggiungiImpianto(new ImpiantoCarnivoro(nuovoId, nome));
-                cout << "Aggiunto impianto carnivoro: " << nome << endl;
             } else {
                 cerr << "Tipo di impianto non riconosciuto: " << tipo << endl;
             }
@@ -230,138 +225,121 @@ void UserInterface::processCommand(const std::string& command) {
                 return;
             }
 
+            string nomeImpianto = parti[1];  //Negli altri casi il secondo campo del è il nome dell'impianto
 
-            //Gestione dell'accensione di un impianto (comando "set nome on/off")
-            string nomeImpianto = parti[1];
-
-            if (parti[2] == "on") {
-                // Accendi impianto
-                if (serra.accendiImpianto(nomeImpianto)) {
+            if (parti[2] == "on") { //Gestione comando "set nome on"
+                if (serra.accendiImpianto(nomeImpianto)) {  //Accendo l'impianto
                     log(serra.getOrarioAttuale(), "L'impianto '" + nomeImpianto + "' si e' acceso", 0);
                 } else {
-                    std::cout << "Impossibile accendere l'impianto '" << nomeImpianto << "'" << std::endl;
+                    cout << "Impossibile accendere l'impianto '" << nomeImpianto << "'" << endl;
                 }
-            } else if (parti[2] == "off") {
-                // Spegni impianto
-                if (serra.spegniImpianto(nomeImpianto)) {
+            } else if (parti[2] == "off") { //Gestione comando "set nome off"
+                if (serra.spegniImpianto(nomeImpianto)) {   //Spengo l'impianto
                     log(serra.getOrarioAttuale(), "L'impianto '" + nomeImpianto + "' si e' spento", 0);
                 } else {
                     cerr << "Impossibile spegnere l'impianto '" << nomeImpianto << "'" << std::endl;
                 }
-            } else if (parti.size() == 3 && parti[2].find(':') != string::npos) {
-                // Comando: set nome HH:MM
-                Orario oraInizio = stringToOrario(parti[2]);
-                if (oraInizio == Orario()) {
-                    std::cout << "Formato orario non valido. Usa HH:MM." << std::endl;
+            } else if (serra.getImpianto(nomeImpianto)->getTipo() == "mediterraneo") {  //Gestione nel caso di impianti mediterranei --> non posso impostare timer perchè conta la temperatura
+                cerr << "I comandi 'set nome HH:MM' e set nome HH:MM HH:MM' non sono accessibili per gli impianti di tipo mediterraneo" << endl;
+                return;
+            } else if (parti.size() == 3 && parti[2].find(':') != string::npos) {   //Gestisco il comando è del tipo "set nome HH:MM"
+                Orario oraInizio = stringToOrario(parti[2]);    //IL parametro che ho come terzo campo del comando è l'ora di inizio
+                if (oraInizio == Orario()) {    //Gestisco il caso in cui l'ora di inizio non sia valida
+                    cerr << "Formato orario non valido. Usa HH:MM." << endl;
                     return;
                 }
 
-                Impianto* imp = serra.getImpianto(nomeImpianto);
-                if (!imp) {
-                    std::cout << "Impianto '" << nomeImpianto << "' non trovato." << std::endl;
+                Impianto* imp = serra.getImpianto(nomeImpianto);    //Prendo l'impianto dalla serra dato il nome
+                if (!imp) { //Gestisco il caso in cui non lo trovo
+                    cerr << "Impianto '" << nomeImpianto << "' non trovato." << endl;
                     return;
                 }
 
-                Orario oraFine;
-                if (imp->isAutomatico()) {
-                    int durata = imp->getDurataAutomatica();
+                Orario oraFine; //Variabile per gestire l'orario di fine
+                if (imp->isAutomatico()) {  //Se l'impianto è automatico
+                    int durata = imp->getDurataAutomatica();    //Prendo il valore della durataAutomatica
                     oraFine = oraInizio;
-                    oraFine.incrementa(durata);
+                    oraFine.incrementa(durata); //Incremento l'ora di fine fino al valore della durataAutomatica
                 } else {
-                    oraFine = Orario(23, 59); // Manuale: acceso fino a fine giornata
+                    oraFine = Orario(23, 59); //Manuale: acceso fino a fine giornata
                 }
 
-                if (serra.impostaTimer(nomeImpianto, oraInizio, oraFine)) {
-                    log(serra.getOrarioAttuale(), "Timer impostato per '" + nomeImpianto +
-                                                  "' dalle " + oraInizio.toString() +
-                                                  " alle " + oraFine.toString(), 0);
-                } else {
-                    std::cout << "Impossibile impostare il timer per l'impianto '" << nomeImpianto << "'" << std::endl;
-                }
+                serra.impostaTimer(nomeImpianto, oraInizio, oraFine);   //Imposto un timer nella serra
+
                 return;
             }
             else if (parti.size() == 4 && parti[2].find(':') != string::npos && parti[3].find(':') != string::npos) {
-                // Comando: set nome HH:MM HH:MM
-                Orario oraInizio = stringToOrario(parti[2]);
-                Orario oraFine = stringToOrario(parti[3]);
+                //Gestisco il comando "set nome HH:MM HH:MM"
+                Orario oraInizio = stringToOrario(parti[2]);    //Prelevo l'ora di inizio
+                Orario oraFine = stringToOrario(parti[3]);  //Prelevo l'ora di fine
 
-                if (oraInizio == Orario() || oraFine == Orario()) {
-                    std::cout << "Formato orario non valido. Usa HH:MM." << std::endl;
+                if (oraInizio == Orario() || oraFine == Orario()) { //Se uno dei formati dell'ora non è corretto: errore
+                    cerr << "Formato orario non valido. Usa HH:MM." << endl;
                     return;
                 }
 
-                Impianto* imp = serra.getImpianto(nomeImpianto);
-                if (!imp) {
-                    std::cout << "Impianto '" << nomeImpianto << "' non trovato." << std::endl;
+                Impianto* imp = serra.getImpianto(nomeImpianto);    //Prelevo l'impianto dalla serra
+                if (!imp) { //Se non lo trovo: errore
+                    cerr << "Impianto '" << nomeImpianto << "' non trovato." << endl;
                     return;
                 }
 
-                if (imp->isAutomatico()) {
-                    std::cout << "Errore: Non è possibile impostare un intervallo temporale per un impianto automatico." << std::endl;
+                if (imp->isAutomatico()) {  //Se l'impianto è automatico, non posso impostare una durata manualmente
+                    cerr << "Errore: Non è possibile impostare un intervallo temporale per un impianto automatico." << endl;
                     return;
                 }
 
-                // Impianto manuale
-                if (serra.impostaTimer(nomeImpianto, oraInizio, oraFine)) {
-                    log(serra.getOrarioAttuale(), "Timer impostato per '" + nomeImpianto +
-                                                  "' dalle " + oraInizio.toString() +
-                                                  " alle " + oraFine.toString(), 0);
-                } else {
-                    std::cout << "Impossibile impostare il timer per l'impianto '" << nomeImpianto << "'" << std::endl;
-                }
+                serra.impostaTimer(nomeImpianto, oraInizio, oraFine);   //Se l'impianto è manuale imposto un timer con gli orari inseriti
+
                 return;
             }
         }
-        // Comando rm (rimozione timer)
-        if (parti[0] == "rm" && parti.size() == 2) {
-            std::string nomeImpianto = parti[1];
 
-            if (serra.rimuoviTimer(nomeImpianto)) {
+        if (parti[0] == "rm" && parti.size() == 2) {    //Gestione comando "rm nome"
+            string nomeImpianto = parti[1];     //La seconda parola del comando rappresenta il nome dell'impianto
+
+            if (serra.rimuoviTimer(nomeImpianto)) { //Se rimuovo il timer correttamente lo scrivo
                 log(serra.getOrarioAttuale(), "Timer rimosso per '" + nomeImpianto + "'", 0);
             } else {
-                std::cout << "Impossibile rimuovere il timer per l'impianto '" << nomeImpianto << "'" << std::endl;
+                cerr << "Impossibile rimuovere il timer per l'impianto '" << nomeImpianto << "'" << endl;
             }
             return;
         }
 
-        // Comando show (mostra stato)
-        if (parti[0] == "show") {
-            if (parti.size() == 1) {
-                // Mostra tutti gli impianti
-                std::vector<std::string> stati = serra.mostraStatoImpianti();
+        if (parti[0] == "show") {   //Gestione del comandi "show"
+            if (parti.size() == 1) {    //Se questo comando non ha altre parti --> Gestione comando "show"
+                vector<string> stati = serra.mostraStatoImpianti(); //Salvo in un vettore le informazioni su tutti gli impianti della serra
 
-                if (stati.empty()) {
-                    std::cout << "Nessun impianto presente nella serra." << std::endl;
-                } else {
-                    std::cout << "=== Stato Impianti ===" << std::endl;
-                    for (const auto& stato : stati) {
-                        std::cout << stato << std::endl;
-                    }
-                    std::cout << "Consumo idrico totale: " << std::fixed << std::setprecision(2)
-                              << serra.getConsumoIdricoTotale() << " litri" << std::endl;
+                if (stati.empty()) {    //Se non ci sono informazioni --> non ci sono impianti
+                    cout << "Nessun impianto presente nella serra." << endl;
+                } else {    //Stampo lo stato di tutti gli impianti
+                    cout << "=== Stato Impianti ===" << endl;
+                    for (const string& stato : stati) {
+                        cout << stato << endl;
+                    }   //Stampo il consumo idrico totale della serra
+                    cout << "Consumo idrico totale: " << fixed << setprecision(2)
+                              << serra.getConsumoIdricoTotale() << " litri" << endl;
                 }
-            } else if (parti.size() == 2) {
-                // Mostra un impianto specifico
-                std::string nomeImpianto = parti[1];
-                std::string stato = serra.mostraStatoImpianto(nomeImpianto);
+            } else if (parti.size() == 2) { //Gestione comando "show nome"
+                string nomeImpianto = parti[1]; //Prelevo il nome dell'impianto dal comando
+                string stato = serra.mostraStatoImpianto(nomeImpianto); //Salvo in una stringa lo stato dell'impianto
 
-                if (stato.empty()) {
-                    std::cout << "Impianto '" << nomeImpianto << "' non trovato." << std::endl;
+                if (stato.empty()) {    //Se non ci sono informazioni --> l'impianto richiesto non è presente
+                    cout << "Impianto '" << nomeImpianto << "' non trovato." << endl;
                 } else {
-                    std::cout << stato << std::endl;
+                    cout << stato << endl;
                 }
             }
             return;
         }
 
-        // Comandi reset
+        //Gestione comandi "reset"
         if (parti[0] == "reset") {
             if (parti.size() == 2) {
-                if (parti[1] == "time") {
-                    // Reset orario
-                    std::vector<std::string> eventi = serra.resetOrario();
-                    for (const auto& evento : eventi) {
-                        std::cout << evento << std::endl;
+                if (parti[1] == "time") {   //Gestione comando "reset time"
+                    vector<string> eventi = serra.resetOrario();
+                    for (const string& evento : eventi) {
+                        cout << evento << endl;
                     }
                     log(Orario(), "L'orario attuale e' 00:00", 0);
                     return;
@@ -375,10 +353,7 @@ void UserInterface::processCommand(const std::string& command) {
                     return;
                 } if (parti[1] == "all") {
                     // Reset completo
-                    std::vector<std::string> eventi = serra.resetAll();
-                    for (const auto& evento : eventi) {
-                        std::cout << evento << std::endl;
-                    }
+                    serra.resetAll();
                     log(Orario(), "Sistema completamente resettato", 0);
                     return;
                 }

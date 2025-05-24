@@ -14,7 +14,7 @@ Serra::Serra() : orarioAttuale(), prossimoId(1) {
 //Distruttore
 //Author: Davide Gastaldello
 Serra::~Serra() {
-    for (auto ptr : impianti) { //Itero su tutti i puntatori a impianto
+    for (Impianto* ptr : impianti) { //Itero su tutti i puntatori a impianto
         delete ptr; //Dealloco la memoria di ciascun impianto
     }
 }
@@ -58,7 +58,7 @@ int Serra::aggiungiImpianto(Impianto* impianto) {
     impianti.push_back(impianto); //Inserisco l'impianto nel vettore
 
     stringstream ss;
-    ss << "Aggiunto impianto '" << impianto->getNome() << "' con ID " << id;
+    ss << "Aggiunto impianto " << impianto->getTipo() << " '" << impianto->getNome() << "' con ID " << id;
     log(orarioAttuale, ss.str());
 
     return id; //Ritorno l'ID assegnato al nuovo impianto
@@ -105,7 +105,7 @@ bool Serra::accendiImpianto(const string& nome) {
         bool result = impianti[indice]->accendi(orarioAttuale); //Accendo l'impianto in base all'orario attuale
 
         if (result) {
-            log(orarioAttuale, "L'impianto '" + nome + "' si è acceso");
+            log(orarioAttuale, "L'impianto '" + nome + "' si e' acceso");
         } else {
             log(orarioAttuale, "Errore: Impossibile accendere l'impianto '" + nome + "'", 1);
         }
@@ -125,7 +125,7 @@ bool Serra::spegniImpianto(const string& nome) {
         bool result = impianti[indice]->spegni(orarioAttuale); //Spengo l'impianto in base all'orario attuale
 
         if (result) {
-            log(orarioAttuale, "L'impianto '" + nome + "' si è spento");
+            log(orarioAttuale, "L'impianto '" + nome + "' si e' spento");
         } else {
             log(orarioAttuale, "Errore: Impossibile spegnere l'impianto '" + nome + "'", 1);
         }
@@ -206,10 +206,10 @@ vector<string> Serra::impostaOrario(const Orario& nuovoOrario) {
             if (statoModificato) {  //Se lo stato è modificato
                 stringstream ss;
                 if (impianto->isAttivo()) { //se l'impianto si è attivato, lo comunico
-                    ss << "L'impianto \"" << impianto->getNome() << "\" si è acceso";
+                    ss << "L'impianto \"" << impianto->getNome() << "\" si e' acceso";
                     log(prossimoStep, ss.str());
                 } else {    //Se l'impianto si è spento, lo comunico
-                    ss << "L'impianto \"" << impianto->getNome() << "\" si è spento";
+                    ss << "L'impianto \"" << impianto->getNome() << "\" si e' spento";
                     log(prossimoStep, ss.str());
                 }
                 eventi.push_back(ss.str());
@@ -245,7 +245,7 @@ vector<string> Serra::resetOrario() {
         if (impianto->isAttivo()) { //Se è acceso
             impianto->spegni(orarioAttuale);    //Lo spengo
             stringstream ss;
-            ss << "L'impianto \"" << impianto->getNome() << "\" si è spento";
+            ss << "L'impianto \"" << impianto->getNome() << "\" si e' spento";
             log(orarioAttuale, ss.str());
             eventi.push_back(ss.str()); //Evento spegnimento
         }
@@ -285,11 +285,29 @@ vector<string> Serra::resetTimer() {
 //Author: Davide Gastaldello
 vector<string> Serra::resetAll() {
     vector<string> eventi;  //Creo un vettore di stringhe che conterrà gli eventi
+
     vector<string> eventiTimer = resetTimer(); //Resetto i timer
     eventi.insert(eventi.end(), eventiTimer.begin(), eventiTimer.end());    //In eventi, copio gli eventi del timer
 
-    vector<string> eventiOrario = resetOrario(); //Reset l'orario
+    vector<string> eventiOrario = resetOrario(); //Resetto l'orario
     eventi.insert(eventi.end(), eventiOrario.begin(), eventiOrario.end());  //In eventi, copio gli eventi dell'orario
+
+    //Infine rimuovo tutti gli impianti
+    for (Impianto* impianto : impianti) {   //Per ogni impianto nella serra
+        string nomeImpianto = impianto->getNome();
+        delete impianto;    //Dealloco la memoria dell'impianto
+
+        stringstream ss;
+        ss << "Rimosso impianto \"" << nomeImpianto << "\"";
+        log(orarioAttuale, ss.str());
+        eventi.push_back(ss.str());
+    }
+
+    impianti.clear();   // Svuoto il vector
+    prossimoId = 1;     // Resetto anche il contatore degli ID
+
+    log(orarioAttuale, "Tutti gli impianti sono stati rimossi");
+    eventi.push_back("Tutti gli impianti sono stati rimossi");
 
     log(orarioAttuale, "Il sistema è stato ripristinato alle condizioni iniziali");
     eventi.push_back("Il sistema è stato ripristinato alle condizioni iniziali");
@@ -358,11 +376,11 @@ bool Serra::esisteImpianto(const string& nome) const {
     return trovaIndiceImpiantoDaNome(nome) < impianti.size();
 }
 
-Impianto* Serra::getImpianto(const std::string& nome) {
-    for (auto& impianto : impianti) {
+Impianto* Serra::getImpianto(const string& nome) {
+    for (Impianto*& impianto : impianti) {
         if (impianto->getNome() == nome) {
             return impianto;
         }
     }
-    return nullptr;  // Non trovato
+    return nullptr;  //Non trovato
 }

@@ -4,7 +4,6 @@
 #include "Impianto.h"
 
 class ImpiantoAlpino : public Impianto {
-private:
     static constexpr double INTERVALLO_ORE = 1;  // Intervallo di attivazione in ore
     static constexpr double DURATA_ATTIVAZIONE_ORE = 1;  // Durata dell'attivazione modificata a 2.5 ore
 
@@ -12,11 +11,11 @@ private:
     Orario prossimoSpegnimento;  // Orario del prossimo spegnimento programmato
 
 public:
-    ImpiantoAlpino(int id, const std::string& nome, double tassoConsumo = 5.0);
+    ImpiantoAlpino(int id, const string& nome, double tassoConsumo = 5.0);
     bool aggiorna(const Orario& orarioPrecedente, const Orario& orarioAttuale) override;
     bool impostaTimer(const Orario& oraInizio, const Orario& oraFine) override;
     bool rimuoviTimer() override;
-    std::string stampaStato() const override;
+    string stampaStato() const override;
     Impianto* clone() const override;
     void calcolaProssimaAttivazione(const Orario& orarioAttuale);
 

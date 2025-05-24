@@ -5,17 +5,15 @@
 
 using namespace std;
 
-//SISTEMATO FINO A RIGA 160
-
 //Costruttore per l'impianto
 //Author: Davide Gastaldello
-Impianto::Impianto(int _id, const string& _nome, double _tassoConsumo, bool _modalitaAutomatica)
+Impianto::Impianto(int _id, const string& _nome, double _tassoConsumo, bool _modalitaAutomatica, const string& _tipo)
     : id(_id),
       nome(_nome),
       attivo(false),    //All'inizio l'impianto è spento
       consumoIdrico(0.0),   //Il consumo idrico iniziale è 0
       tassoConsumo(_tassoConsumo),  //Il tasso di consumo dipende dal tipo di impianto
-      modalitaAutomatica(_modalitaAutomatica) {
+      modalitaAutomatica(_modalitaAutomatica), tipo(_tipo) {
 }
 
 //Funzione per accendere l'impianto

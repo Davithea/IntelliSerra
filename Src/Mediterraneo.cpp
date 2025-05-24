@@ -4,7 +4,7 @@
 #include <cmath>
 
 ImpiantoMediterraneo::ImpiantoMediterraneo(int id, const std::string& nome, bool /*_isWeekend*/, double tassoConsumo)
-    : Impianto(id, nome, tassoConsumo, true), generatore(std::random_device{}()) {}
+    : Impianto(id, nome, tassoConsumo, true, "mediterraneo"), generatore(std::random_device{}()) {}
 
 bool ImpiantoMediterraneo::aggiorna(const Orario& orarioPrecedente, const Orario& orarioAttuale) {
     bool statoModificato = false;
@@ -13,7 +13,7 @@ bool ImpiantoMediterraneo::aggiorna(const Orario& orarioPrecedente, const Orario
     if (minutiTrascorsi <= 0) return false;
 
     if (attivo) {
-        std::uniform_real_distribution aumentoTemp(0.75, 1.0);
+        uniform_real_distribution aumentoTemp(0.75, 1.0);
         double aumentoTotale = (minutiTrascorsi / 60.0) * aumentoTemp(generatore);
         temperatura += aumentoTotale;
 

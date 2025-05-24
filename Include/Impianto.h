@@ -12,6 +12,7 @@ class Impianto {
 protected:
     int id; //Identificatore per riconoscere in modo univoco un impianto
     string nome;    //Stringa per contenere il nome dell'impianto
+    string tipo;    //Stringa per contenere il tipo dei impianto
     bool attivo;    //Variabile booleana per indicare se un impianto è attivo o meno
     Orario ultimaAttivazione;   //Orario per tenere traccia dell'ultima attivazione dell'impianto
     double consumoIdrico;       //Consumo totale di acqua
@@ -19,20 +20,21 @@ protected:
     bool modalitaAutomatica;    //Variabile booleana per indicare se l'impianto funziona in modalità automatica
 
 public:
-    Impianto(int _id, const string& _nome, double _tassoConsumo, bool _modalitaAutomatica); //Costruttore per l'impianto
+    Impianto(int _id, const string& _nome, double _tassoConsumo, bool _modalitaAutomatica, const string& _tipo); //Costruttore per l'impianto
     virtual ~Impianto() = default;  //Costruttore di default che può essere sovrascritto dalle classi secondarie
     virtual bool accendi(const Orario& orarioCorrente); //Funzione per accendere l'impianto
     virtual bool spegni(const Orario& orarioCorrente);  //Funzione per spegnere l'impianto
     virtual bool impostaTimer(const Orario& oraInizio, const Orario& oraFine);  //Funzione per impostare un timer
     virtual bool rimuoviTimer();    //Funzione per rimuovere un timer precedentemente impostato
     virtual bool aggiorna(const Orario& orarioPrecedente, const Orario& orarioAttuale) = 0; //Funzione per aggiornare lo stato di un impianto
-    virtual std::string stampaStato() const;    //Funzione per stampare lo stato di un impianto
+    virtual string stampaStato() const;    //Funzione per stampare lo stato di un impianto
     double calcolaConsumo(double oreDiAttivita) const;  //Funzione per calcolare il consumo di un impianto
     virtual Impianto* clone() const = 0;
 
     //Propetry pubbliche per accedere agli attributi privati della classe
     int getId() const { return id; }
-    std::string getNome() const { return nome; }
+    string getNome() const { return nome; }
+    string getTipo() const { return tipo; }
     bool isAttivo() const { return attivo; }
     Orario getUltimaAttivazione() const { return ultimaAttivazione; }
     double getConsumoIdrico() const { return consumoIdrico; }
