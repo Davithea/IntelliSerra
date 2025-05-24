@@ -1,34 +1,41 @@
 #include "./Mediterraneo.h"
 #include <sstream>
 #include <iomanip>
-#include <cmath>
 
-ImpiantoMediterraneo::ImpiantoMediterraneo(int id, const std::string& nome, bool /*_isWeekend*/, double tassoConsumo)
-    : Impianto(id, nome, tassoConsumo, true, "mediterraneo"), generatore(std::random_device{}()) {}
+//Costruttore dell'impianto Mediterraneo
+//Author: Davide Gastaldello
+ImpiantoMediterraneo::ImpiantoMediterraneo(int id, const string& nome, double tassoConsumo)
+    : Impianto(id, nome, tassoConsumo, true, "mediterraneo"), generatore(random_device{}()) {}
 
+//Funzione per aggiornare lo stato dell’impianto in base all’orario attuale
+//Author: Davide Gastaldello
 bool ImpiantoMediterraneo::aggiorna(const Orario& orarioPrecedente, const Orario& orarioAttuale) {
     bool statoModificato = false;
 
-    int minutiTrascorsi = orarioPrecedente.differenzaInMinuti(orarioAttuale);
+    int minutiTrascorsi = orarioPrecedente.differenzaInMinuti(orarioAttuale); //Calcolo minuti trascorsi tra i due orari
     if (minutiTrascorsi <= 0) return false;
 
     if (attivo) {
+        //Se l’impianto è attivo aumento la temperatura con una variazione casuale
         uniform_real_distribution aumentoTemp(0.75, 1.0);
         double aumentoTotale = (minutiTrascorsi / 60.0) * aumentoTemp(generatore);
         temperatura += aumentoTotale;
 
+        //Se la temperatura supera i 28°C spengo l’impianto
         if (temperatura >= 28.0) {
             temperatura = 28.0;
             spegni(orarioAttuale);
             statoModificato = true;
         }
     } else {
-        std::uniform_real_distribution<double> decrementoTemp(0.01, 0.05);
+        //Se l’impianto è spento diminuisco lentamente la temperatura
+        uniform_real_distribution<double> decrementoTemp(0.01, 0.05);
         for (int i = 0; i < minutiTrascorsi; ++i) {
             temperatura -= decrementoTemp(generatore);
         }
         if (temperatura < 0) temperatura = 0;
 
+        //Se la temperatura scende sotto i 25°C riattivo l’impianto
         if (temperatura < 25.0) {
             attivo = true;
             ultimaAttivazione = orarioAttuale;
@@ -36,23 +43,11 @@ bool ImpiantoMediterraneo::aggiorna(const Orario& orarioPrecedente, const Orario
         }
     }
 
-    if (!attivo && orarioPrecedente < prossimaAttivazione && prossimaAttivazione <= orarioAttuale) {
-        attivo = true;
-        ultimaAttivazione = prossimaAttivazione;
-        statoModificato = true;
-
-        prossimoSpegnimento = prossimaAttivazione;
-        prossimoSpegnimento.incrementa(static_cast<int>(DURATA_ATTIVAZIONE_ORE * 60));
-    }
-
-    if (attivo && orarioPrecedente < prossimoSpegnimento && prossimoSpegnimento <= orarioAttuale) {
-        spegni(prossimoSpegnimento);
-        statoModificato = true;
-    }
-
     return statoModificato;
 }
 
+//Funzione per impostare il timer automatico dell’impianto (accensione/spegnimento)
+//Author: Davide Gastaldello
 bool ImpiantoMediterraneo::impostaTimer(const Orario& oraInizio, const Orario& oraFine) {
     if (!modalitaAutomatica) return false;
     if (oraFine <= oraInizio) return false;
@@ -62,6 +57,8 @@ bool ImpiantoMediterraneo::impostaTimer(const Orario& oraInizio, const Orario& o
     return true;
 }
 
+//Funzione per disattivare il timer automatico dell’impianto
+//Author: Davide Gastaldello
 bool ImpiantoMediterraneo::rimuoviTimer() {
     if (!modalitaAutomatica) return false;
 
@@ -70,16 +67,21 @@ bool ImpiantoMediterraneo::rimuoviTimer() {
     return true;
 }
 
-std::string ImpiantoMediterraneo::stampaStato() const {
-    std::stringstream ss;
-    ss << Impianto::stampaStato();
+//Funzione che restituisce una stringa con lo stato attuale dell’impianto
+//Author: Davide Gastaldello
+string ImpiantoMediterraneo::stampaStato() const {
+    stringstream ss;
+    string stato = attivo ? "Attivo" : "Spento";
 
-    ss << " - Tipo: Mediterraneo";
-    ss << " - Temperatura: " << std::fixed << std::setprecision(2) << temperatura << "°C";
+    ss << "[Mediterraneo] " << nome << " (ID: " << id << ") - Stato: " << stato
+       << " | Consumo: " << fixed << setprecision(2) << consumoIdrico << " L"
+       << " | Temperatura: " << fixed << setprecision(2) << temperatura << " C";
 
     return ss.str();
 }
 
+//Funzione per clonare l’oggetto impianto (usata per creare copie dinamiche)
+//Author: Davide Gastaldello
 Impianto* ImpiantoMediterraneo::clone() const {
     return new ImpiantoMediterraneo(*this);
 }

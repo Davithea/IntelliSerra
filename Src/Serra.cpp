@@ -1,7 +1,7 @@
-#include "Serra.h"
+#include "Serra.h"  //Includo il file header della serra
 #include <sstream>
 #include <iomanip>
-#include "Logger.h"
+#include "Logger.h" //Includo il file header de logger che mi serve per stampare i messaggi
 
 using namespace std;
 
@@ -255,8 +255,8 @@ vector<string> Serra::resetOrario() {
 
     orarioAttuale.reset(); //Resetto l'orario attuale a 00:00
 
-    log(orarioAttuale, "L'orario è stato reimpostato a 00:00");
-    eventi.push_back("L'orario è stato reimpostato a 00:00");
+    log(orarioAttuale, "L'orario e' stato reimpostato a 00:00");
+    eventi.push_back("L'orario e' stato reimpostato a 00:00");
 
     return eventi;  //Ritorno gli eventi
 }
@@ -309,8 +309,8 @@ vector<string> Serra::resetAll() {
     log(orarioAttuale, "Tutti gli impianti sono stati rimossi");
     eventi.push_back("Tutti gli impianti sono stati rimossi");
 
-    log(orarioAttuale, "Il sistema è stato ripristinato alle condizioni iniziali");
-    eventi.push_back("Il sistema è stato ripristinato alle condizioni iniziali");
+    log(orarioAttuale, "Il sistema e' stato ripristinato alle condizioni iniziali");
+    eventi.push_back("Il sistema e' stato ripristinato alle condizioni iniziali");
 
     return eventi;
 }
@@ -376,11 +376,13 @@ bool Serra::esisteImpianto(const string& nome) const {
     return trovaIndiceImpiantoDaNome(nome) < impianti.size();
 }
 
+//Funzione per prelevare il puntatore ad un impianto presente nella serra dato il nome
+//Author: Davide Gastaldello
 Impianto* Serra::getImpianto(const string& nome) {
-    for (Impianto*& impianto : impianti) {
-        if (impianto->getNome() == nome) {
-            return impianto;
+    for (Impianto*& impianto : impianti) {  //Per ogni impianto nella serra
+        if (impianto->getNome() == nome) {  //Se il nome dell'impianto è quello cercato
+            return impianto;    //Ritorno quell'impianto
         }
     }
-    return nullptr;  //Non trovato
+    return nullptr;
 }

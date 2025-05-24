@@ -11,7 +11,7 @@ Orario::Orario(int _ore, int _minuti) {
     setMinuti(_minuti);
 }
 
-Orario::Orario(const std::string& orarioStr) {
+Orario::Orario(const string& orarioStr) {
     if (!fromString(orarioStr)) {
         // Se il formato non è valido, inizializza a 00:00
         ore = 0;
@@ -44,9 +44,9 @@ void Orario::setMinuti(int _minuti) {
     }
 }
 
-bool Orario::fromString(const std::string& orarioStr) {
+bool Orario::fromString(const string& orarioStr) {
     // Formato atteso: "HH:MM"
-    std::istringstream ss(orarioStr);
+    istringstream ss(orarioStr);
     int h, m;
     char delim;
     
@@ -61,10 +61,10 @@ bool Orario::fromString(const std::string& orarioStr) {
     return true;
 }
 
-std::string Orario::toString() const {
-    std::stringstream ss;
-    ss << std::setfill('0') << std::setw(2) << ore << ":" 
-       << std::setfill('0') << std::setw(2) << minuti;
+string Orario::toString() const {
+    stringstream ss;
+    ss << setfill('0') << setw(2) << ore << ":"
+       << setfill('0') << setw(2) << minuti;
     return ss.str();
 }
 

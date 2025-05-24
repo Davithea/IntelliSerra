@@ -82,27 +82,18 @@ bool ImpiantoCarnivoro::rimuoviTimer() {
     return true;
 }
 
-std::string ImpiantoCarnivoro::stampaStato() const {
-    std::stringstream ss;
+string ImpiantoCarnivoro::stampaStato() const {
+    stringstream ss;
 
     // Prima parte: informazioni di base dell'impianto
-    std::string stato = attivo ? "Attivo" : "Spento";
-    ss << "[Tropicale] " << nome << " (ID: " << std::to_string(id) << ") - Stato: " << stato
-       << " | Consumo: " << std::fixed << std::setprecision(2) << consumoIdrico << " L";
+    string stato = attivo ? "Attivo" : "Spento";
+    ss << "[Carnivoro] " << nome << " (ID: " << to_string(id) << ") - Stato: " << stato
+       << " | Consumo: " << fixed << setprecision(2) << consumoIdrico << " L";
 
-    // Aggiungiamo le informazioni specifiche dell'impianto tropicale
+    // Aggiungiamo le informazioni specifiche dell'impianto carnivoro
     if (attivo) {
         ss << " | Ultima attivazione: " << ultimaAttivazione.toString();
     }
-
-    if (modalitaAutomatica && prossimaAttivazione != Orario()) {
-        ss << " | Prossima attivazione: " << prossimaAttivazione.toString();
-        if (attivo) {
-            ss << " | Prossimo spegnimento: " << prossimoSpegnimento.toString();
-        }
-    }
-
-    ss << " | Ciclo: " << INTERVALLO_ORE << "h ogni " << DURATA_ATTIVAZIONE_ORE << "h";
 
     return ss.str();
 }

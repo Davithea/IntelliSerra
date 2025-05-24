@@ -14,18 +14,24 @@
 #include "Carnivoro.h"
 #include "Logger.h"
 
+//Costruttore per UserInterface
+//Author: Davide Gastaldello
 UserInterface::UserInterface(Serra& serra) : serra(serra), continua(true) {
-    initializeLogger(new ConsoleLogger());
 }
 
+//Distruttore per UserInterface
+//Author: Davide Gastaldello
 UserInterface::~UserInterface() {
-    initializeLogger(nullptr);
 }
 
+//Funzione per verificare che l'interfaccia utente stia effettivamente funzionando
+//Author: Davide Gastaldello
 bool UserInterface::isRunning() const {
     return continua;
 }
 
+//Funzione per fermare l'esecuzione dell'interfaccia utente
+//Author: Davide Gastaldello
 void UserInterface::stop() {
     continua = false;
 }
@@ -37,7 +43,6 @@ void UserInterface::run() {
 
     cout << "=== Sistema di Gestione Serra Intelligente ===" << endl;
     cout << "Digita 'help' per visualizzare i comandi disponibili." << endl;
-
     while (continua) {
         cout << "\n> "; //Stampo il simbolo del terminale che indica che posso inserire un comando
         getline(cin, input);    //Funzione che legge una riga del programma
@@ -50,7 +55,7 @@ void UserInterface::run() {
         //Gestione dei comandi exit, quit e help
         if (inputLower == "exit" || inputLower == "quit") { //Se il comando è exit o quit
             continua = false;   //Dico al programma che deve fermarsi...
-            cout << "Chiusura del sistema di gestione serra." << std::endl; //Scrivo che ho chiuso il programma
+            cout << "Chiusura del sistema di gestione serra." << endl; //Scrivo che ho chiuso il programma
             continue;
         } if (inputLower == "help") {   //Se il comando è help
             stampaHelp();   //Stampo il messaggio che mostra quello che fanno i vari comandi
@@ -123,7 +128,7 @@ Orario UserInterface::stringToOrario(const string& str) {
 
     //Verifico che l'orario inserito sia corretto (non ci siano ore > 23 o < 0 e minuti > 60 o < 0)
     if (ore < 0 || ore > 23 || minuti < 0 || minuti > 59) {
-        std::cerr << "Orario non valido: " << str << std::endl;
+        cerr << "Orario non valido: " << str << endl;
         return Orario();
     }
 
@@ -228,17 +233,9 @@ void UserInterface::processCommand(const string& command) {
             string nomeImpianto = parti[1];  //Negli altri casi il secondo campo del è il nome dell'impianto
 
             if (parti[2] == "on") { //Gestione comando "set nome on"
-                if (serra.accendiImpianto(nomeImpianto)) {  //Accendo l'impianto
-                    log(serra.getOrarioAttuale(), "L'impianto '" + nomeImpianto + "' si e' acceso", 0);
-                } else {
-                    cout << "Impossibile accendere l'impianto '" << nomeImpianto << "'" << endl;
-                }
+                serra.accendiImpianto(nomeImpianto);
             } else if (parti[2] == "off") { //Gestione comando "set nome off"
-                if (serra.spegniImpianto(nomeImpianto)) {   //Spengo l'impianto
-                    log(serra.getOrarioAttuale(), "L'impianto '" + nomeImpianto + "' si e' spento", 0);
-                } else {
-                    cerr << "Impossibile spegnere l'impianto '" << nomeImpianto << "'" << std::endl;
-                }
+                serra.spegniImpianto(nomeImpianto);
             } else if (serra.getImpianto(nomeImpianto)->getTipo() == "mediterraneo") {  //Gestione nel caso di impianti mediterranei --> non posso impostare timer perchè conta la temperatura
                 cerr << "I comandi 'set nome HH:MM' e set nome HH:MM HH:MM' non sono accessibili per gli impianti di tipo mediterraneo" << endl;
                 return;
@@ -298,11 +295,8 @@ void UserInterface::processCommand(const string& command) {
         if (parti[0] == "rm" && parti.size() == 2) {    //Gestione comando "rm nome"
             string nomeImpianto = parti[1];     //La seconda parola del comando rappresenta il nome dell'impianto
 
-            if (serra.rimuoviTimer(nomeImpianto)) { //Se rimuovo il timer correttamente lo scrivo
-                log(serra.getOrarioAttuale(), "Timer rimosso per '" + nomeImpianto + "'", 0);
-            } else {
-                cerr << "Impossibile rimuovere il timer per l'impianto '" << nomeImpianto << "'" << endl;
-            }
+            serra.rimuoviTimer(nomeImpianto);
+
             return;
         }
 
@@ -313,12 +307,9 @@ void UserInterface::processCommand(const string& command) {
                 if (stati.empty()) {    //Se non ci sono informazioni --> non ci sono impianti
                     cout << "Nessun impianto presente nella serra." << endl;
                 } else {    //Stampo lo stato di tutti gli impianti
-                    cout << "=== Stato Impianti ===" << endl;
                     for (const string& stato : stati) {
                         cout << stato << endl;
-                    }   //Stampo il consumo idrico totale della serra
-                    cout << "Consumo idrico totale: " << fixed << setprecision(2)
-                              << serra.getConsumoIdricoTotale() << " litri" << endl;
+                    }
                 }
             } else if (parti.size() == 2) { //Gestione comando "show nome"
                 string nomeImpianto = parti[1]; //Prelevo il nome dell'impianto dal comando
@@ -337,33 +328,19 @@ void UserInterface::processCommand(const string& command) {
         if (parti[0] == "reset") {
             if (parti.size() == 2) {
                 if (parti[1] == "time") {   //Gestione comando "reset time"
-                    vector<string> eventi = serra.resetOrario();
-                    for (const string& evento : eventi) {
-                        cout << evento << endl;
-                    }
-                    log(Orario(), "L'orario attuale e' 00:00", 0);
+                    serra.resetOrario();    //Resetto l'orario
                     return;
-                } if (parti[1] == "timers") {
-                    // Reset timer
-                    std::vector<std::string> eventi = serra.resetTimer();
-                    for (const auto& evento : eventi) {
-                        std::cout << evento << std::endl;
-                    }
-                    log(serra.getOrarioAttuale(), "Tutti i timer sono stati rimossi", 0);
+                } if (parti[1] == "timers") {   //Gestione comando "reset timers"
+                    serra.resetTimer(); //Resetto tutti i timer presenti nella serra
                     return;
-                } if (parti[1] == "all") {
-                    // Reset completo
-                    serra.resetAll();
-                    log(Orario(), "Sistema completamente resettato", 0);
+                } if (parti[1] == "all") {  //Gestione comando "reset all"
+                    serra.resetAll();   //Resetto tutto il sistema (timer, orario, impianti)
                     return;
                 }
             }
         }
-
-        // Se arriviamo qui, il comando non è stato riconosciuto
-        std::cout << "Comando non riconosciuto. Digita 'help' per la lista dei comandi." << std::endl;
-
-    } catch (const std::exception& e) {
-        std::cerr << "Errore nell'esecuzione del comando: " << e.what() << std::endl;
+       cout << "Comando non riconosciuto. Digita 'help' per la lista dei comandi." << endl; //Se nessun comando è stato riconosciuto, lo scrivo
+    } catch (const exception& e) {
+        cerr << "Errore nell'esecuzione del comando: " << e.what() << endl;
     }
 }

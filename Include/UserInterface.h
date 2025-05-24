@@ -5,13 +5,14 @@
 #include <vector>
 #include "Orario.h"
 #include "Serra.h"
-#include "Logger.h"
 
 using namespace std;
 
+//Classe per la gestione dell'interfaccia utente
+//Author: Davide Gastaldello
 class UserInterface {
-    Serra& serra;
-    bool continua;
+    Serra& serra;   //Creo una serra
+    bool continua;  //Variabile booleana per indicare l'eventuale sospenzione dell'interfaccia utente
 
 public:
     UserInterface(Serra& serra);    //Costruttore per l'interfacciaUtente

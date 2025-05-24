@@ -3,6 +3,8 @@
 
 #include <string>
 
+using namespace std;
+
 class Orario {
     int ore;
     int minuti;
@@ -10,14 +12,14 @@ class Orario {
 public:
     Orario();
     Orario(int _ore, int _minuti);
-    Orario(const std::string& orarioStr);
+    Orario(const string& orarioStr);
 
     int getOre() const { return ore; }
     int getMinuti() const { return minuti; }
     void setOre(int _ore);
     void setMinuti(int _minuti);
 
-    bool fromString(const std::string& orarioStr);
+    bool fromString(const string& orarioStr);
 
     std::string toString() const;
 
@@ -44,4 +46,4 @@ public:
     bool operator>=(const Orario& altro) const;
 };
 
-#endif // ORARIO_H
+#endif //ORARIO_H

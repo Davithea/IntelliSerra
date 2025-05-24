@@ -1,7 +1,8 @@
 #include "Desertico.h"
 #include <sstream>
+#include <iomanip>
 
-ImpiantoDesertico::ImpiantoDesertico(int id, const std::string& nome, double tassoConsumo)
+ImpiantoDesertico::ImpiantoDesertico(int id, const string& nome, double tassoConsumo)
     : Impianto(id, nome, tassoConsumo, false, "desertico") {  // Modalità automatica = false
     // L'impianto desertico inizia spento
 }
@@ -51,21 +52,12 @@ bool ImpiantoDesertico::rimuoviTimer() {
     return true;
 }
 
-std::string ImpiantoDesertico::stampaStato() const {
-    std::stringstream ss;
-    std::string stato = attivo ? "Attivo" : "Spento";
+string ImpiantoDesertico::stampaStato() const {
+    stringstream ss;
+    string stato = attivo ? "Attivo" : "Spento";
 
     ss << "[Desertico] " << nome << " (ID: " << id << ") - Stato: " << stato
-       << " | Consumo: " << consumoIdrico << " L";
-
-    if (modalitaAutomatica && prossimaAttivazione != Orario()) {
-        ss << " - Prossima attivazione: " << prossimaAttivazione.toString();
-        if (attivo) {
-            ss << " - Prossimo spegnimento: " << prossimoSpegnimento.toString();
-        }
-    }
-
-    ss << " - Modalità: Automatizzata";
+    << " | Consumo: " << fixed << setprecision(2) << consumoIdrico << " L";
 
     return ss.str();
 }

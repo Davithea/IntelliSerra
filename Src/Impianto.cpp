@@ -3,8 +3,6 @@
 #include <sstream>
 #include <iomanip>
 
-using namespace std;
-
 //Costruttore per l'impianto
 //Author: Davide Gastaldello
 Impianto::Impianto(int _id, const string& _nome, double _tassoConsumo, bool _modalitaAutomatica, const string& _tipo)
@@ -80,10 +78,14 @@ double Impianto::calcolaConsumo(double oreDiAttivita) const {
     return tassoConsumo * oreDiAttivita;
 }
 
+//Funzione che ritorna se l'impianto è automatico o meno
+//Author: Davide Gastaldello
 bool Impianto::isAutomatico() const {
     return modalitaAutomatica;
 }
 
+//Funzione per prelevare la durata di accensione automatica
+//Author: Davide Gastaldello
 int Impianto::getDurataAutomatica() const {
-    return 60; // Default: 60 minuti (può essere sovrascritto nelle sottoclassi)
+    return 60;  //Default: 60 minuti (può essere sovrascritto nelle sottoclassi)
 }

@@ -29,7 +29,7 @@ public:
     virtual bool aggiorna(const Orario& orarioPrecedente, const Orario& orarioAttuale) = 0; //Funzione per aggiornare lo stato di un impianto
     virtual string stampaStato() const;    //Funzione per stampare lo stato di un impianto
     double calcolaConsumo(double oreDiAttivita) const;  //Funzione per calcolare il consumo di un impianto
-    virtual Impianto* clone() const = 0;
+    virtual Impianto* clone() const = 0;    //Variabile clone dell'impianto
 
     //Propetry pubbliche per accedere agli attributi privati della classe
     int getId() const { return id; }
