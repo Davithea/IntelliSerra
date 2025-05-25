@@ -1,0 +1,182 @@
+
+========== NUOVA SESSIONE ==========
+[00:00]	Aggiunto impianto tropicale 't' con ID 1
+[00:00]	Aggiunto impianto desertico 'd' con ID 2
+[00:00]	Aggiunto impianto alpino 'a' con ID 3
+[00:00]	Aggiunto impianto mediterraneo 'm' con ID 4
+[00:00]	Aggiunto impianto carnivoro 'c' con ID 5
+[00:00]	Timer impostato per 'a' dalle 10:00 alle 11:00
+[00:00]	Timer impostato per 'c' dalle 12:00 alle 13:30
+[00:00]	Timer impostato per 'd' dalle 18:00 alle 20:00
+[00:00]	Timer impostato per 't' dalle 07:00 alle 09:30
+[00:30]	L'orario attuale e' 00:30
+[01:00]	L'orario attuale e' 01:00
+[01:30]	L'orario attuale e' 01:30
+[01:42]	L'impianto "m" si e' acceso
+[02:00]	L'orario attuale e' 02:00
+[02:30]	L'orario attuale e' 02:30
+[03:00]	L'orario attuale e' 03:00
+[03:30]	L'orario attuale e' 03:30
+[04:00]	L'orario attuale e' 04:00
+[04:30]	L'orario attuale e' 04:30
+[05:00]	L'orario attuale e' 05:00
+[05:10]	L'impianto "m" si e' spento
+[05:30]	L'orario attuale e' 05:30
+[06:00]	L'orario attuale e' 06:00
+[06:30]	L'orario attuale e' 06:30
+[06:55]	L'impianto "m" si e' acceso
+[07:00]	L'impianto "t" si e' acceso
+[07:00]	L'orario attuale e' 07:00
+[07:30]	L'orario attuale e' 07:30
+[08:00]	L'orario attuale e' 08:00
+[08:30]	L'orario attuale e' 08:30
+[09:00]	L'orario attuale e' 09:00
+[09:30]	L'impianto "t" si e' spento
+[09:30]	L'orario attuale e' 09:30
+[10:00]	L'impianto "a" si e' acceso
+[10:00]	L'orario attuale e' 10:00
+[10:24]	L'impianto "m" si e' spento
+[10:30]	L'orario attuale e' 10:30
+[11:00]	L'impianto "a" si e' spento
+[11:00]	L'orario attuale e' 11:00
+[11:30]	L'orario attuale e' 11:30
+[12:00]	L'impianto "c" si e' acceso
+[12:00]	L'orario attuale e' 12:00
+[12:06]	L'impianto "m" si e' acceso
+[12:30]	L'orario attuale e' 12:30
+[13:00]	L'orario attuale e' 13:00
+[13:30]	L'impianto "c" si e' spento
+[13:30]	L'orario attuale e' 13:30
+[14:00]	L'orario attuale e' 14:00
+[14:30]	L'orario attuale e' 14:30
+[15:00]	L'orario attuale e' 15:00
+[15:30]	L'orario attuale e' 15:30
+[15:32]	L'impianto "m" si e' spento
+[16:00]	L'orario attuale e' 16:00
+[16:30]	L'orario attuale e' 16:30
+[17:00]	L'orario attuale e' 17:00
+[17:18]	L'impianto "m" si e' acceso
+[17:30]	L'orario attuale e' 17:30
+[18:00]	L'impianto "d" si e' acceso
+[18:00]	L'orario attuale e' 18:00
+[18:30]	L'orario attuale e' 18:30
+[19:00]	L'orario attuale e' 19:00
+[19:30]	L'orario attuale e' 19:30
+[20:00]	L'impianto "d" si e' spento
+[20:00]	L'orario attuale e' 20:00
+[20:30]	L'orario attuale e' 20:30
+[20:45]	L'impianto "m" si e' spento
+[21:00]	L'orario attuale e' 21:00
+[21:30]	L'orario attuale e' 21:30
+[22:00]	L'orario attuale e' 22:00
+[22:23]	L'impianto "m" si e' acceso
+[22:30]	L'orario attuale e' 22:30
+[23:00]	L'orario attuale e' 23:00
+[23:30]	L'orario attuale e' 23:30
+========== FINE SESSIONE ==========
+
+
+========== NUOVA SESSIONE ==========
+[00:00]	Aggiunto impianto tropicale 't' con ID 1
+[00:00]	Timer impostato per 't' dalle 12:30 alle 15:00
+[00:00]	Aggiunto impianto mediterraneo 'm' con ID 2
+[00:00]	Aggiunto impianto desertico 'd' con ID 3
+[00:00]	Timer impostato per 'd' dalle 14:00 alle 23:59
+[00:30]	L'orario attuale e' 00:30
+[01:00]	L'orario attuale e' 01:00
+[01:30]	L'orario attuale e' 01:30
+[01:36]	L'impianto "m" si e' acceso
+[02:00]	L'orario attuale e' 02:00
+[02:30]	L'orario attuale e' 02:30
+[03:00]	L'orario attuale e' 03:00
+[03:30]	L'orario attuale e' 03:30
+[04:00]	L'orario attuale e' 04:00
+[04:30]	L'orario attuale e' 04:30
+[05:00]	L'orario attuale e' 05:00
+[05:01]	L'impianto "m" si e' spento
+[05:30]	L'orario attuale e' 05:30
+[06:00]	L'orario attuale e' 06:00
+[06:30]	L'orario attuale e' 06:30
+[06:38]	L'impianto "m" si e' acceso
+[07:00]	L'orario attuale e' 07:00
+[07:30]	L'orario attuale e' 07:30
+[08:00]	L'orario attuale e' 08:00
+[08:30]	L'orario attuale e' 08:30
+[09:00]	L'orario attuale e' 09:00
+[09:30]	L'orario attuale e' 09:30
+[10:00]	L'orario attuale e' 10:00
+[10:05]	L'impianto "m" si e' spento
+[10:30]	L'orario attuale e' 10:30
+[11:00]	L'orario attuale e' 11:00
+[11:30]	L'orario attuale e' 11:30
+[11:43]	L'impianto "m" si e' acceso
+[12:00]	L'orario attuale e' 12:00
+[12:30]	L'impianto "t" si e' acceso
+[12:30]	L'orario attuale e' 12:30
+[13:00]	L'orario attuale e' 13:00
+[13:30]	L'orario attuale e' 13:30
+[14:00]	L'impianto "d" si e' acceso
+[14:00]	L'orario attuale e' 14:00
+[14:30]	L'orario attuale e' 14:30
+[15:00]	L'impianto "t" si e' spento
+[15:00]	L'orario attuale e' 15:00
+[15:10]	L'impianto "m" si e' spento
+[15:30]	L'orario attuale e' 15:30
+[16:00]	L'orario attuale e' 16:00
+[16:30]	L'orario attuale e' 16:30
+[16:51]	L'impianto "m" si e' acceso
+[17:00]	L'orario attuale e' 17:00
+[17:30]	L'orario attuale e' 17:30
+[18:00]	L'orario attuale e' 18:00
+[18:30]	L'orario attuale e' 18:30
+[19:00]	L'orario attuale e' 19:00
+[19:30]	L'orario attuale e' 19:30
+[20:00]	L'orario attuale e' 20:00
+[20:18]	L'impianto "m" si e' spento
+[20:30]	L'orario attuale e' 20:30
+[21:00]	L'orario attuale e' 21:00
+[21:30]	L'orario attuale e' 21:30
+[22:00]	L'orario attuale e' 22:00
+[22:02]	L'impianto "m" si e' acceso
+[22:30]	L'orario attuale e' 22:30
+[23:00]	L'orario attuale e' 23:00
+[23:30]	L'orario attuale e' 23:30
+[23:59]	L'impianto "d" si e' spento
+[23:59]	Timer rimosso per l'impianto "t"
+[23:59]	Timer rimosso per l'impianto "m"
+[23:59]	Timer rimosso per l'impianto "d"
+[23:59]	Tutti i timer sono stati rimossi
+[23:59]	L'impianto "m" si e' spento
+[00:00]	L'orario e' stato reimpostato a 00:00
+[00:00]	Rimosso impianto "t"
+[00:00]	Rimosso impianto "m"
+[00:00]	Rimosso impianto "d"
+[00:00]	Tutti gli impianti sono stati rimossi
+[00:00]	Il sistema e' stato ripristinato alle condizioni iniziali
+[00:00]	Aggiunto impianto alpino 'a' con ID 1
+[00:30]	L'orario attuale e' 00:30
+[01:00]	L'orario attuale e' 01:00
+[01:30]	L'orario attuale e' 01:30
+[02:00]	L'orario attuale e' 02:00
+[02:30]	L'orario attuale e' 02:30
+[03:00]	L'orario attuale e' 03:00
+[03:30]	L'orario attuale e' 03:30
+[04:00]	L'orario attuale e' 04:00
+[04:30]	L'orario attuale e' 04:30
+[05:00]	L'orario attuale e' 05:00
+[05:30]	L'orario attuale e' 05:30
+[06:00]	L'orario attuale e' 06:00
+[06:30]	L'orario attuale e' 06:30
+[07:00]	L'orario attuale e' 07:00
+[07:30]	L'orario attuale e' 07:30
+[08:00]	L'orario attuale e' 08:00
+[08:30]	L'orario attuale e' 08:30
+[09:00]	L'orario attuale e' 09:00
+[09:30]	L'orario attuale e' 09:30
+[10:00]	L'orario attuale e' 10:00
+[10:30]	L'orario attuale e' 10:30
+[11:00]	L'orario attuale e' 11:00
+[11:30]	L'orario attuale e' 11:30
+[12:00]	L'orario attuale e' 12:00
+========== FINE SESSIONE ==========
+

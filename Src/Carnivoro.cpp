@@ -2,95 +2,101 @@
 #include <sstream>
 #include <iomanip>
 
+//Author: Leonardo Cracco
+// Costruttore
 ImpiantoCarnivoro::ImpiantoCarnivoro(int id, const string& nome, double tassoConsumo)
     : Impianto(id, nome, tassoConsumo, true, "carnivoro") {
     // Inizializza con modalità automatica
     // Le variabili prossimaAttivazione e prossimoSpegnimento sono inizializzate a 00:00
 }
 
+//Author: Leonardo Cracco
+// Metodo che aggiorna lo stato dell'impianto tra due orari
 bool ImpiantoCarnivoro::aggiorna(const Orario& orarioPrecedente, const Orario& orarioAttuale) {
     bool statoModificato = false;
 
-    // Gestione singolo ciclo attivazione-spegnimento
     Orario tempOrario = orarioPrecedente;
 
+    // Esegui cicli di accensione/spegnimento finché necessario
     while (true) {
-        // Caso 1: accensione
+        // Caso 1: accensione automatica
         if (!attivo && tempOrario < prossimaAttivazione && prossimaAttivazione <= orarioAttuale) {
             accendi(prossimaAttivazione);
             statoModificato = true;
-
             tempOrario = prossimaAttivazione;
         }
-        // Caso 2: spegnimento
+        // Caso 2: spegnimento automatico
         else if (attivo && tempOrario < prossimoSpegnimento && prossimoSpegnimento <= orarioAttuale) {
             spegni(prossimoSpegnimento);
             statoModificato = true;
 
-            // Non programmare nuove attivazioni automatiche!
+            // Dopo lo spegnimento, rimuove le attivazioni automatiche programmate
             prossimaAttivazione = Orario();
             prossimoSpegnimento = Orario();
 
             tempOrario = prossimoSpegnimento;
         } else {
-            break;
+            break; // Se non c'è nessuna modifica da fare esce dal ciclo
         }
     }
 
     return statoModificato;
 }
 
-
+//Author: Leonardo Cracco
+// Imposta un timer manuale per attivare e spegnere l’impianto
 bool ImpiantoCarnivoro::impostaTimer(const Orario& oraInizio, const Orario& oraFine) {
     if (!modalitaAutomatica) {
-        return false;
+        return false; // Timer non disponibile in modalità manuale
     }
 
-    // Verifica che l'orario di fine sia successivo a quello di inizio
+    // Verifica che l'orario di fine sia dopo quello di inizio
     if (oraFine <= oraInizio) {
         return false;
     }
 
-    // Verifica che la durata non sia eccessiva
+    // Impedisce timer troppo lunghi (oltre 12 ore)
     double durata = oraInizio.differenzaInOre(oraFine);
-    if (durata > 12.0) {  // Limitiamo la durata a 12 ore per sicurezza
+    if (durata > 12.0) {
         return false;
     }
 
-    // Imposta la prossima attivazione e il prossimo spegnimento
+    // Imposta i valori per la prossima attivazione e spegnimento
     prossimaAttivazione = oraInizio;
     prossimoSpegnimento = oraFine;
 
     return true;
 }
 
+//Author: Leonardo Cracco
+// Rimuove eventuali timer impostati
 bool ImpiantoCarnivoro::rimuoviTimer() {
     if (!modalitaAutomatica) {
         return false;
     }
 
-    // Reimposta gli orari di attivazione/spegnimento
+    // Annulla le attivazioni automatiche
     prossimaAttivazione = Orario();
     prossimoSpegnimento = Orario();
 
-    // Se l'impianto è attivo, lo spegniamo
+    // Se l'impianto è acceso, lo spegne
     if (attivo) {
-        Orario orarioCorrente;  // Utilizziamo 00:00 come orario di riferimento
+        Orario orarioCorrente; // Usa 00:00 come riferimento
         spegni(orarioCorrente);
     }
 
     return true;
 }
 
+//Author: Leonardo Cracco
+// Ritorna una stringa con lo stato dell’impianto
 string ImpiantoCarnivoro::stampaStato() const {
     stringstream ss;
 
-    // Prima parte: informazioni di base dell'impianto
     string stato = attivo ? "Attivo" : "Spento";
     ss << "[Carnivoro] " << nome << " (ID: " << to_string(id) << ") - Stato: " << stato
        << " | Consumo: " << fixed << setprecision(2) << consumoIdrico << " L";
 
-    // Aggiungiamo le informazioni specifiche dell'impianto carnivoro
     if (attivo) {
         ss << " | Ultima attivazione: " << ultimaAttivazione.toString();
     }
@@ -98,37 +104,37 @@ string ImpiantoCarnivoro::stampaStato() const {
     return ss.str();
 }
 
+// Clona  l'oggetto impianto carnivoro
 Impianto* ImpiantoCarnivoro::clone() const {
     return new ImpiantoCarnivoro(*this);
 }
 
+//Author: Leonardo Cracco
+// Calcola il prossimo orario di attivazione automatica in base a un intervallo fisso
 void ImpiantoCarnivoro::calcolaProssimaAttivazione(const Orario& orarioAttuale) {
-    // Calcola la prossima attivazione a partire dall'orario attuale
-    // Per le piante tropicali, l'attivazione avviene ogni INTERVALLO_ORE
+    int intervalloMinuti = static_cast<int>(INTERVALLO_ORE * 60); // 1.5 ore → 90 minuti
 
-    // Converti l'intervallo in minuti
-    int intervalloMinuti = static_cast<int>(INTERVALLO_ORE * 60);
-
-    // Crea un nuovo orario partendo dall'attuale e aggiungendo l'intervallo
+    // Imposta la prossima attivazione aggiungendo l’intervallo all’orario attuale
     prossimaAttivazione = orarioAttuale;
     prossimaAttivazione.incrementa(intervalloMinuti);
 }
 
-// Override del metodo accendi per impostare lo spegnimento automatico dopo 1 ora e mezza
+//Author: Leonardo Cracco
+// Accende l'impianto e imposta lo spegnimento automatico dopo 1.5 ore
 bool ImpiantoCarnivoro::accendi(const Orario& orario) {
-    // Chiamiamo il metodo accendi della classe base
     bool acceso = Impianto::accendi(orario);
 
     if (acceso) {
-        // Impianto acceso con successo, impostiamo lo spegnimento automatico dopo 1.5 ore
         ultimaAttivazione = orario;
         prossimoSpegnimento = orario;
-        prossimoSpegnimento.incrementa(90); // 1.5 ore = 90 minuti
+        prossimoSpegnimento.incrementa(90); // 90 minuti = 1.5 ore
     }
 
     return acceso;
 }
 
+//Author: Leonardo Cracco
+// Ritorna la durata dell’attivazione automatica (in minuti)
 int ImpiantoCarnivoro::getDurataAutomatica() const {
-    return 90; // I carnivori funzionano per 1,5 ore in automatico
+    return 90; // Durata automatica fissa: 1 ora e mezza
 }

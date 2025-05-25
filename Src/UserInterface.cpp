@@ -261,12 +261,14 @@ void UserInterface::processCommand(const string& command) {
 
             if (parti[2] == "on") { //Gestione comando "set nome on"
                 serra.accendiImpianto(nomeImpianto);
-            } else if (parti[2] == "off") { //Gestione comando "set nome off"
+                return;
+            } if (parti[2] == "off") { //Gestione comando "set nome off"
                 serra.spegniImpianto(nomeImpianto);
-            } else if (serra.getImpianto(nomeImpianto)->getTipo() == "mediterraneo") {  //Gestione nel caso di impianti mediterranei --> non posso impostare timer perchè conta la temperatura
+                return;
+            } if (serra.getImpianto(nomeImpianto)->getTipo() == "mediterraneo") {  //Gestione nel caso di impianti mediterranei --> non posso impostare timer perchè conta la temperatura
                 cerr << "I comandi 'set nome HH:MM' e set nome HH:MM HH:MM' non sono accessibili per gli impianti di tipo mediterraneo" << endl;
                 return;
-            } else if (parti.size() == 3 && parti[2].find(':') != string::npos) {   //Gestisco il comando è del tipo "set nome HH:MM"
+            } if (parti.size() == 3 && parti[2].find(':') != string::npos) {   //Gestisco il comando è del tipo "set nome HH:MM"
                 Orario oraInizio = stringToOrario(parti[2]);    //Il parametro che ho come terzo campo del comando è l'ora di inizio
                 if (oraInizio == Orario()) {    //Gestisco il caso in cui l'ora di inizio non sia valida
                     cerr << "Formato orario non valido. Usa HH:MM." << endl;

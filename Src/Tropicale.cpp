@@ -1,13 +1,19 @@
+//=== TROPICALE.CPP ===
+
 #include "Tropicale.h"
 #include <sstream>
 #include <iomanip>
 
+//Costruttore dell'impianto Tropicale
+//Author: Pietro Stocchiero
 ImpiantoTropicale::ImpiantoTropicale(int id, const string& nome, double tassoConsumo)
     : Impianto(id, nome, tassoConsumo, true, "tropicale") {
     // Inizializza con modalità automatica
     // Le variabili prossimaAttivazione e prossimoSpegnimento sono inizializzate a 00:00
 }
 
+//Funzione per aggiornare lo stato dell'impianto in base all'orario attuale
+//Author: Pietro Stocchiero
 bool ImpiantoTropicale::aggiorna(const Orario& orarioPrecedente, const Orario& orarioAttuale) {
     bool statoModificato = false;
 
@@ -15,19 +21,19 @@ bool ImpiantoTropicale::aggiorna(const Orario& orarioPrecedente, const Orario& o
     Orario tempOrario = orarioPrecedente;
 
     while (true) {
-        // Caso 1: accensione
+        // Caso 1: accensione programmata
         if (!attivo && tempOrario < prossimaAttivazione && prossimaAttivazione <= orarioAttuale) {
             accendi(prossimaAttivazione);
             statoModificato = true;
 
             tempOrario = prossimaAttivazione;
         }
-        // Caso 2: spegnimento
+        // Caso 2: spegnimento programmato
         else if (attivo && tempOrario < prossimoSpegnimento && prossimoSpegnimento <= orarioAttuale) {
             spegni(prossimoSpegnimento);
             statoModificato = true;
 
-            // Non programmare nuove attivazioni automatiche!
+            // Non programmare nuove attivazioni automatiche dopo lo spegnimento
             prossimaAttivazione = Orario();
             prossimoSpegnimento = Orario();
 
@@ -40,7 +46,8 @@ bool ImpiantoTropicale::aggiorna(const Orario& orarioPrecedente, const Orario& o
     return statoModificato;
 }
 
-
+//Funzione per impostare il timer automatico dell'impianto (accensione/spegnimento)
+//Author: Pietro Stocchiero
 bool ImpiantoTropicale::impostaTimer(const Orario& oraInizio, const Orario& oraFine) {
     if (!modalitaAutomatica) {
         return false;
@@ -51,9 +58,9 @@ bool ImpiantoTropicale::impostaTimer(const Orario& oraInizio, const Orario& oraF
         return false;
     }
 
-    // Verifica che la durata non sia eccessiva
+    // Verifica che la durata non sia eccessiva (limitata a 12 ore per sicurezza)
     double durata = oraInizio.differenzaInOre(oraFine);
-    if (durata > 12.0) {  // Limitiamo la durata a 12 ore per sicurezza
+    if (durata > 12.0) {
         return false;
     }
 
@@ -64,6 +71,8 @@ bool ImpiantoTropicale::impostaTimer(const Orario& oraInizio, const Orario& oraF
     return true;
 }
 
+//Funzione per disattivare il timer automatico dell'impianto
+//Author: Pietro Stocchiero
 bool ImpiantoTropicale::rimuoviTimer() {
     if (!modalitaAutomatica) {
         return false;
@@ -73,7 +82,7 @@ bool ImpiantoTropicale::rimuoviTimer() {
     prossimaAttivazione = Orario();
     prossimoSpegnimento = Orario();
 
-    // Se l'impianto è attivo, lo spegniamo
+    // Se l'impianto è attivo, lo spegniamo immediatamente
     if (attivo) {
         Orario orarioCorrente;  // Utilizziamo 00:00 come orario di riferimento
         spegni(orarioCorrente);
@@ -82,6 +91,8 @@ bool ImpiantoTropicale::rimuoviTimer() {
     return true;
 }
 
+//Funzione che restituisce una stringa con lo stato attuale dell'impianto
+//Author: Pietro Stocchiero
 string ImpiantoTropicale::stampaStato() const {
     stringstream ss;
 
@@ -98,10 +109,14 @@ string ImpiantoTropicale::stampaStato() const {
     return ss.str();
 }
 
+//Funzione per clonare l'oggetto impianto (usata per creare copie dinamiche)
+//Author: Pietro Stocchiero
 Impianto* ImpiantoTropicale::clone() const {
     return new ImpiantoTropicale(*this);
 }
 
+//Funzione per calcolare la prossima attivazione automatica dell'impianto
+//Author: Pietro Stocchiero
 void ImpiantoTropicale::calcolaProssimaAttivazione(const Orario& orarioAttuale) {
     // Calcola la prossima attivazione a partire dall'orario attuale
     // Per le piante tropicali, l'attivazione avviene ogni INTERVALLO_ORE
@@ -114,7 +129,8 @@ void ImpiantoTropicale::calcolaProssimaAttivazione(const Orario& orarioAttuale) 
     prossimaAttivazione.incrementa(intervalloMinuti);
 }
 
-// Override del metodo accendi per impostare lo spegnimento automatico dopo 2 ore e mezza
+//Override del metodo accendi per impostare lo spegnimento automatico dopo 2.5 ore
+//Author: Pietro Stocchiero
 bool ImpiantoTropicale::accendi(const Orario& orario) {
     // Chiamiamo il metodo accendi della classe base
     bool acceso = Impianto::accendi(orario);
@@ -129,6 +145,8 @@ bool ImpiantoTropicale::accendi(const Orario& orario) {
     return acceso;
 }
 
+//Funzione che restituisce la durata automatica di funzionamento dell'impianto tropicale
+//Author: Pietro Stocchiero
 int ImpiantoTropicale::getDurataAutomatica() const {
     return 150; // I tropicali funzionano per 2,5 ore in automatico
 }

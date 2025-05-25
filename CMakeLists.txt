@@ -3,10 +3,10 @@ project(IntelliSerra)
 
 set(CMAKE_CXX_STANDARD 20)
 
-# Aggiunta della directory degli header
+#Aggiunta della directory degli header
 include_directories(${CMAKE_SOURCE_DIR}/Include)
 
-# Definizione dell'eseguibile con i file sorgente
+#Definizione dell'eseguibile con i file sorgente
 add_executable(IntelliSerra
         main.cpp
         Src/Impianto.cpp
@@ -18,7 +18,6 @@ add_executable(IntelliSerra
         Include/Tropicale.h
         Src/Tropicale.cpp
         Include/Mediterraneo.h
-        Src/Mediterraneo.cpp
         Src/Mediterraneo.cpp
         Include/UserInterface.h
         Src/UserInterface.cpp

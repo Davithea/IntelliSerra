@@ -1,3 +1,5 @@
+//=== ORARIO.H ===
+
 #ifndef ORARIO_H
 #define ORARIO_H
 
@@ -5,11 +7,14 @@
 
 using namespace std;
 
+//Definizione della classe Orario per la gestione degli orari nel formato HH:MM
+//Author: Pietro Stocchiero
 class Orario {
-    int ore;
-    int minuti;
+    int ore;      //Ore (0-23)
+    int minuti;   //Minuti (0-59)
 
 public:
+    //Per commenti relativi alle funzioni della classe Orario vedi Orario.cpp
     Orario();
     Orario(int _ore, int _minuti);
     Orario(const string& orarioStr);
