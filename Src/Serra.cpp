@@ -193,36 +193,72 @@ vector<string> Serra::impostaOrario(const Orario& nuovoOrario) {
     }
 
     Orario iteratore = orarioAttuale;
-    while (iteratore < nuovoOrario) {   //Finché l'orario è minore di quello a cui devo arrivare
-        Orario prossimoStep = iteratore;
-        prossimoStep.incrementa(30);    //Incremento di 30 minuti
-
-        if (prossimoStep > nuovoOrario) {   //Mi fermo all'orario esatto se il prossimo step è successivo alla mezz'ora
-            prossimoStep = nuovoOrario;
+    Orario prossimoStep = iteratore;
+    if(nuovoOrario > Orario(23, 30)) {
+        if(nuovoOrario.toString() == "23:59") {
+            stringstream ss;
+            ss << "Fine giornata" << endl;
         }
+        else {
+            while(iteratore < nuovoOrario) {
+                prossimoStep.incrementa(1);
 
-        for (Impianto* impianto : impianti) {   //Per ogni impianto nella serra
-            bool statoModificato = impianto->aggiorna(iteratore, prossimoStep);
-            if (statoModificato) {  //Se lo stato è modificato
-                stringstream ss;
-                if (impianto->isAttivo()) { //se l'impianto si è attivato, lo comunico
-                    ss << "L'impianto \"" << impianto->getNome() << "\" si e' acceso";
-                    log(prossimoStep, ss.str());
-                } else {    //Se l'impianto si è spento, lo comunico
-                    ss << "L'impianto \"" << impianto->getNome() << "\" si e' spento";
-                    log(prossimoStep, ss.str());
+                if (prossimoStep > nuovoOrario) {   //Mi fermo all'orario esatto se il prossimo step è successivo alla mezz'ora
+                    prossimoStep = nuovoOrario;
                 }
-                eventi.push_back(ss.str());
             }
+            for (Impianto* impianto : impianti) {
+                //Per ogni impianto nella serra
+                bool statoModificato = impianto->aggiorna(iteratore, prossimoStep);
+                if (statoModificato) {  //Se lo stato è modificato
+                    stringstream ss;
+                    if (impianto->isAttivo()) { //se l'impianto si è attivato, lo comunico
+                        ss << "L'impianto \"" << impianto->getNome() << "\" si e' acceso";
+                        log(prossimoStep, ss.str());
+                    } else {    //Se l'impianto si è spento, lo comunico
+                        ss << "L'impianto \"" << impianto->getNome() << "\" si e' spento";
+                        log(prossimoStep, ss.str());
+                    }
+                    eventi.push_back(ss.str());
+                }
+            }
+
+            iteratore = prossimoStep;
         }
+    }
+    else {
+        while (iteratore < nuovoOrario) {
+            prossimoStep.incrementa(30);    //Incremento di 30 minuti
 
-        iteratore = prossimoStep;
+            if (prossimoStep > nuovoOrario) {   //Mi fermo all'orario esatto se il prossimo step è successivo alla mezz'ora
+                prossimoStep = nuovoOrario;
+            }
 
-        if (iteratore.getMinuti() % 30 == 0) {  //Se ho iterato di mezz'ora
-            stringstream ssOrario;
-            ssOrario << "L'orario attuale e' " << iteratore.toString(); //Lo scrivo
-            log(iteratore, ssOrario.str());
-            eventi.push_back(ssOrario.str());
+            for (Impianto* impianto : impianti) {
+                //Per ogni impianto nella serra
+                bool statoModificato = impianto->aggiorna(iteratore, prossimoStep);
+                if (statoModificato) {  //Se lo stato è modificato
+                    stringstream ss;
+                    if (impianto->isAttivo()) { //se l'impianto si è attivato, lo comunico
+                        ss << "L'impianto \"" << impianto->getNome() << "\" si e' acceso";
+                        log(prossimoStep, ss.str());
+                    } else {    //Se l'impianto si è spento, lo comunico
+                        ss << "L'impianto \"" << impianto->getNome() << "\" si e' spento";
+                        log(prossimoStep, ss.str());
+                    }
+                    eventi.push_back(ss.str());
+                }
+            }
+
+
+            iteratore = prossimoStep;
+
+            if (iteratore.getMinuti() % 30 == 0) {  //Se ho iterato di mezz'ora
+                stringstream ssOrario;
+                ssOrario << "L'orario attuale e' " << iteratore.toString(); //Lo scrivo
+                log(iteratore, ssOrario.str());
+                eventi.push_back(ssOrario.str());
+            }
         }
     }
 

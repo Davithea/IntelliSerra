@@ -29,7 +29,7 @@ bool ImpiantoMediterraneo::aggiorna(const Orario& orarioPrecedente, const Orario
         }
     } else {
         //Se l’impianto è spento diminuisco lentamente la temperatura
-        uniform_real_distribution<double> decrementoTemp(0.01, 0.05);
+        uniform_real_distribution decrementoTemp(0.01, 0.05);
         for (int i = 0; i < minutiTrascorsi; ++i) {
             temperatura -= decrementoTemp(generatore);
         }
@@ -46,7 +46,7 @@ bool ImpiantoMediterraneo::aggiorna(const Orario& orarioPrecedente, const Orario
     return statoModificato;
 }
 
-//Funzione per impostare il timer automatico dell’impianto (accensione/spegnimento)
+//Funzione per impostare il timer automatico dell’impianto (accensione/spegnimento) --> non utilizzata nel mio caso
 //Author: Davide Gastaldello
 bool ImpiantoMediterraneo::impostaTimer(const Orario& oraInizio, const Orario& oraFine) {
     if (!modalitaAutomatica) return false;
@@ -57,7 +57,7 @@ bool ImpiantoMediterraneo::impostaTimer(const Orario& oraInizio, const Orario& o
     return true;
 }
 
-//Funzione per disattivare il timer automatico dell’impianto
+//Funzione per disattivare il timer automatico dell’impianto --> non utilizzata nel mio caso
 //Author: Davide Gastaldello
 bool ImpiantoMediterraneo::rimuoviTimer() {
     if (!modalitaAutomatica) return false;

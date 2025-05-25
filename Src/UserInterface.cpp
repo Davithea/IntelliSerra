@@ -171,10 +171,24 @@ void UserInterface::processCommand(const string& command) {
             ss >> cmd; //Legge la prima parola del comando che dovrebbe essere "add"
             ss >> tipo; //Legge il tipo (tropicale, mediterraneo, ecc.)
             getline(ss, nome); //Dopo comando e tipo resta solo da leggere il nome, che sarà la parte finale del comando
-            nome = nome.substr(1); //Dal nome devo però rimuovere lo spazio iniziale che avevo letto con getLine()
+
+            // Rimuovi spazi iniziali e finali manualmente:
+            size_t start = nome.find_first_not_of(" \t\r\n");
+            if (start == string::npos) {
+                cerr << "Errore: Nome impianto non specificato." << endl;
+                return;
+            }
+
+            size_t end = nome.find_last_not_of(" \t\r\n");
+            nome = nome.substr(start, end - start + 1);
+
+            if (nome.empty()) {
+                cerr << "Errore: Nome impianto non specificato." << endl;
+                return;
+            }
 
             transform(tipo.begin(), tipo.end(), tipo.begin(),
-                          [](unsigned char c){ return tolower(c); });   //Trasformo la stringa del tipo in modo da avere una lettura corretta
+                      [](unsigned char c){ return tolower(c); });
 
             if (serra.esisteImpianto(nome)) {   //Controllo che nella serra non esista già un impianto con il nome scelto
                 cerr << "Errore: Esiste già un impianto con il nome '" << nome << "'" << endl;
@@ -205,32 +219,51 @@ void UserInterface::processCommand(const string& command) {
 
         if (parti[0] == "set" && parti.size() >= 3) {
             //Se la prima parola del comando è "set" e il comando ha 3 o più parti
-            if (parti[1] == "time" && parti.size() == 3) {  //Se la seconda parola è "time"
-                Orario nuovoOrario = stringToOrario(parti[2]);  //La terza parte del comando sarà l'orario e quindi lo salvo in una variabile orario dopoa verlo convertito
-                if (nuovoOrario == Orario()) {  //Controllo che il formato dell'orario sia corretto (Orario vuoto errore)
+            if (parti[1] == "time" && parti.size() == 3) {  //Gestione del comando "set time HH:MM"
+                Orario nuovoOrario = stringToOrario(parti[2]);
+                if (nuovoOrario == Orario()) {
                     cerr << "Formato orario non valido. Usa HH:MM." << endl;
                     return;
                 }
 
-                Orario attuale = serra.getOrarioAttuale();  //Prendo l'orario attuale della serra
+                Orario attuale = serra.getOrarioAttuale();
 
-                if (nuovoOrario < attuale) {    //Se il nuovo orario è precedente a quello attuale --> errore
-                    cerr << "Non è possibile impostare un orario precedente all'attuale." << endl;
+                if (nuovoOrario < attuale) {    //Controllo se si sta cercando di andare indietro nel tempo
+                    cerr << "Non e' possibile impostare un orario precedente all'attuale." << endl;
                     return;
                 }
 
-                Orario corrente = attuale;
-
-                while (corrente < nuovoOrario) {    //Scorro nel tempo fino al nuovo orario
-                    Orario prossimo = corrente;
-                    prossimo.incrementa(1); //Incremento di minuto in minuto
-                    vector<string> eventi = serra.impostaOrario(prossimo);  //Imposto l'orario della serra come prossimo
-                    corrente = prossimo;
+                string targetStr = nuovoOrario.toString();
+                if (targetStr > "23:30") {  //Controllo se l'orario target supera le 23:30 --> orario massimo (non capisco perché se metto 23:31 entra in un loop infinito)
+                    serra.impostaOrario(Orario(23, 30));
+                    if(nuovoOrario.toString() == "23:59") {
+                        cout << "Fine giornata!" << endl;
+                        stop();
+                    }
+                    return;
                 }
+
+                if (nuovoOrario == attuale) {   //Se l'orario target è uguale all'attuale, non devo fare nulla
+                    cout << "L'orario e' gia' impostato a " << nuovoOrario.toString() << endl;
+                    return;
+                }
+
+                try {
+                    serra.impostaOrario(nuovoOrario);   //Gestione normale dell'impostazione del nuovo orario
+                } catch (const exception& e) {
+                    cerr << "Errore durante l'impostazione dell'orario: " << e.what() << endl;
+                }
+
                 return;
             }
-
             string nomeImpianto = parti[1];  //Negli altri casi il secondo campo del è il nome dell'impianto
+
+            //Controllo se l'impianto esiste effettivamente
+            Impianto* imp = serra.getImpianto(nomeImpianto);
+            if (!imp) {
+                cerr << "Impianto '" << nomeImpianto << "' non trovato." << endl;
+                return;
+            }
 
             if (parti[2] == "on") { //Gestione comando "set nome on"
                 serra.accendiImpianto(nomeImpianto);
@@ -240,7 +273,7 @@ void UserInterface::processCommand(const string& command) {
                 cerr << "I comandi 'set nome HH:MM' e set nome HH:MM HH:MM' non sono accessibili per gli impianti di tipo mediterraneo" << endl;
                 return;
             } else if (parti.size() == 3 && parti[2].find(':') != string::npos) {   //Gestisco il comando è del tipo "set nome HH:MM"
-                Orario oraInizio = stringToOrario(parti[2]);    //IL parametro che ho come terzo campo del comando è l'ora di inizio
+                Orario oraInizio = stringToOrario(parti[2]);    //Il parametro che ho come terzo campo del comando è l'ora di inizio
                 if (oraInizio == Orario()) {    //Gestisco il caso in cui l'ora di inizio non sia valida
                     cerr << "Formato orario non valido. Usa HH:MM." << endl;
                     return;
@@ -282,7 +315,7 @@ void UserInterface::processCommand(const string& command) {
                 }
 
                 if (imp->isAutomatico()) {  //Se l'impianto è automatico, non posso impostare una durata manualmente
-                    cerr << "Errore: Non è possibile impostare un intervallo temporale per un impianto automatico." << endl;
+                    cerr << "Errore: Non e' possibile impostare un intervallo temporale per un impianto automatico." << endl;
                     return;
                 }
 
