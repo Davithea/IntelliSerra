@@ -233,23 +233,17 @@ void UserInterface::processCommand(const string& command) {
                     return;
                 }
 
-                string targetStr = nuovoOrario.toString();
-                if (targetStr > "23:30") {  //Controllo se l'orario target supera le 23:30 --> orario massimo (non capisco perché se metto 23:31 entra in un loop infinito)
-                    serra.impostaOrario(Orario(23, 30));
-                    if(nuovoOrario.toString() == "23:59") {
-                        cout << "Fine giornata!" << endl;
-                        stop();
-                    }
-                    return;
-                }
-
-                if (nuovoOrario == attuale) {   //Se l'orario target è uguale all'attuale, non devo fare nulla
+                if (nuovoOrario == attuale) {   //Se il nuovo orario è uguale all'attuale, non devo fare nulla
                     cout << "L'orario e' gia' impostato a " << nuovoOrario.toString() << endl;
                     return;
                 }
 
                 try {
                     serra.impostaOrario(nuovoOrario);   //Gestione normale dell'impostazione del nuovo orario
+                    if(nuovoOrario.toString() == "23:59") {
+                        cout << "=== FINE GIORNATA ===" << endl;
+                        cout << "Ora se vuoi puoi terminare il codice con il comando 'exit' oppure resettare il sistema con uno dei comandi di 'reset'" << endl;
+                    }
                 } catch (const exception& e) {
                     cerr << "Errore durante l'impostazione dell'orario: " << e.what() << endl;
                 }
