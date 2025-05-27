@@ -20,7 +20,8 @@ Questo progetto implementa una libreria in C++ per la gestione automatizzata di 
 - **Carnivoro** – Irrigazione automatica ogni 1,5 ore.
 ## 📂 Struttura del codice
 
-- `main.cpp` – Entry point e gestione input da terminale.
+- `main.cpp` – Entry point.
+- `UserInterface.h/cpp` - Gestione input da terminale.
 - `Serra.h/cpp` – Classe centrale che gestisce gli impianti.
 - `Orario.h/cpp` – Gestione e simulazione del tempo.
 - `Impianto.h/cpp` – Classe base dalla quale ereditano tutti gli impianti.
@@ -46,9 +47,13 @@ Questo progetto implementa una libreria in C++ per la gestione automatizzata di 
 ## 📷 Rappresentazione grafica delle classi
 
 ![Immagine UML](https://files.catbox.moe/0bvibv.png)
+
+## 🎞️ Presentazione sul codice
+
+[Clicca qui per visualizzare la presentazione](https://www.canva.com/design/DAGonUBLEyM/HxP2DFfrwtcwTOIxa8TMnQ/edit?utm_content=DAGonUBLEyM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+
 ## Authors
 
 - [@davithea](https://www.github.com/davithea)
 - [@LeonardoCracco](https://github.com/LeonardoCracco)
 - [@PietroStoc](https://github.com/PietroStoc)
-
